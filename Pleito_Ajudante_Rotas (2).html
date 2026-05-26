@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pleito · Ajudante por Rota — Análise Executiva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink-900: #0a1418;
+  --ink-800: #0f1d23;
+  --ink-700: #142933;
+  --ink-600: #1d3741;
+  --ink-500: #2a4a57;
+  --ink-400: #3d6675;
+  --paper: #f4ede0;
+  --paper-soft: #ebe3d3;
+  --amber: #e9a23b;
+  --amber-bright: #f5b94f;
+  --coral: #e8624a;
+  --moss: #7a9367;
+  --rule: rgba(244, 237, 224, 0.12);
+  --rule-strong: rgba(244, 237, 224, 0.25);
+  --pad-x: 56px;
+  --pad-y: 96px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--ink-900);
+  color: var(--paper);
+  font-family: 'Manrope', sans-serif;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.93 0 0 0 0 0.88 0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.4;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  z-index: 1000;
+}
+
+.mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: 'tnum'; }
+
+/* ============ HEADER ============ */
+header {
+  padding: 24px var(--pad-x);
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: rgba(10, 20, 24, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 100;
+  gap: 16px;
+}
+
+.brand {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.brand-mark {
+  width: 34px; height: 34px;
+  border: 1px solid var(--amber);
+  display: grid; place-items: center;
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.brand-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.meta {
+  display: flex;
+  gap: 28px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244, 237, 224, 0.55);
+  font-weight: 500;
+}
+
+.meta strong {
+  color: var(--paper);
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+/* ============ HERO ============ */
+.hero {
+  padding: 88px var(--pad-x) 64px;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 72px;
+  align-items: end;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: var(--pad-x);
+  width: 180px; height: 1px;
+  background: var(--amber);
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber);
+  font-weight: 600;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.1s forwards;
+}
+.eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--amber); flex-shrink: 0; }
+
+h1.hero-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-size: clamp(40px, 6.5vw, 88px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin-bottom: 32px;
+  font-variation-settings: 'opsz' 144;
+  opacity: 0;
+  animation: fadeUp 1s 0.2s forwards;
+}
+h1.hero-title em { font-style: italic; color: var(--amber); font-weight: 300; }
+
+.hero-sub {
+  font-size: 16px;
+  line-height: 1.65;
+  color: rgba(244, 237, 224, 0.7);
+  max-width: 480px;
+  opacity: 0;
+  animation: fadeUp 1s 0.35s forwards;
+}
+
+.hero-stat { opacity: 0; animation: fadeUp 1s 0.5s forwards; }
+
+.hero-stat-label {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(244, 237, 224, 0.5);
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+.hero-stat-value {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(64px, 9vw, 124px);
+  font-weight: 300;
+  line-height: 0.85;
+  letter-spacing: -0.045em;
+  font-variation-settings: 'opsz' 144;
+  font-feature-settings: 'tnum';
+}
+
+.hero-stat-value .currency { font-size: 0.4em; color: var(--amber); margin-right: 0.15em; vertical-align: 0.45em; font-weight: 400; }
+.hero-stat-value .suffix { font-size: 0.55em; color: rgba(244,237,224,0.5); font-weight: 300; }
+
+.hero-stat-foot {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: rgba(244, 237, 224, 0.6);
+  font-family: 'JetBrains Mono', monospace;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ SECTIONS ============ */
+section {
+  padding: var(--pad-y) var(--pad-x);
+  border-bottom: 1px solid var(--rule);
+}
+
+.section-head {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 32px;
+  margin-bottom: 56px;
+  align-items: baseline;
+}
+
+.section-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--amber);
+  letter-spacing: 0.1em;
+  padding-top: 8px;
+  font-weight: 600;
+}
+
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(32px, 4.2vw, 54px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-variation-settings: 'opsz' 144;
+  max-width: 800px;
+}
+
+.section-title em { font-style: italic; color: var(--amber); }
+
+.section-kicker {
+  font-size: 14px;
+  color: rgba(244, 237, 224, 0.6);
+  max-width: 620px;
+  margin-top: 20px;
+  line-height: 1.65;
+}
+
+/* ============ KPI GRID ============ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--rule-strong);
+  border-left: 1px solid var(--rule-strong);
+}
+
+.kpi {
+  padding: 40px 32px;
+  border-right: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
+  background: var(--ink-800);
+  transition: background 0.4s;
+  position: relative;
+  overflow: hidden;
+}
+.kpi:hover { background: var(--ink-700); }
+.kpi::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 0; height: 2px;
+  background: var(--amber);
+  transition: width 0.4s ease;
+}
+.kpi:hover::before { width: 100%; }
+
+.kpi-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(244, 237, 224, 0.55);
+  font-weight: 600;
+  margin-bottom: 28px;
+}
+
+.kpi-value {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(40px, 4.5vw, 56px);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  font-feature-settings: 'tnum';
+  font-variation-settings: 'opsz' 144;
+}
+
+.kpi-value .unit { font-size: 0.4em; color: rgba(244, 237, 224, 0.5); margin-left: 6px; font-weight: 400; }
+
+.kpi-foot {
+  margin-top: 20px;
+  font-size: 12px;
+  color: rgba(244, 237, 224, 0.55);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'JetBrains Mono', monospace;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.kpi-trend { color: var(--moss); font-weight: 500; }
+
+/* ============ PREMISSAS GLOBAIS (controles) ============ */
+.premissas {
+  background: var(--ink-800);
+  border: 1px solid var(--rule-strong);
+  padding: 36px 40px;
+  margin-bottom: 56px;
+}
+
+.premissas-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--rule);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.premissas-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.premissas-sub {
+  font-size: 12px;
+  color: rgba(244, 237, 224, 0.55);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.prem-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+}
+
+.prem-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prem-field label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(244, 237, 224, 0.55);
+  font-weight: 600;
+}
+
+.prem-field input {
+  background: var(--ink-900);
+  border: 1px solid var(--rule-strong);
+  color: var(--paper);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  padding: 12px 14px;
+  font-weight: 500;
+  font-feature-settings: 'tnum';
+  border-radius: 0;
+  transition: border 0.2s;
+  -moz-appearance: textfield;
+}
+.prem-field input::-webkit-outer-spin-button,
+.prem-field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.prem-field input:focus { outline: none; border-color: var(--amber); }
+
+.prem-field .hint {
+  font-size: 11px;
+  color: rgba(244, 237, 224, 0.4);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ============ CARDS DE ROTA (núcleo da apresentação) ============ */
+.rotas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+}
+
+.rota-card {
+  background: var(--ink-800);
+  border: 1px solid var(--rule-strong);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.rota-card-head {
+  padding: 28px 32px 24px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--ink-700);
+}
+
+.rota-card-rank {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--amber);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+}
+
+.rota-card-name {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 18px;
+}
+
+.rota-card-freq {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+}
+
+.rota-freq-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rota-freq-lbl {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(244, 237, 224, 0.5);
+  font-weight: 600;
+}
+
+.rota-freq-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  color: var(--paper);
+  font-weight: 500;
+  font-feature-settings: 'tnum';
+}
+
+.rota-freq-val .sub {
+  font-size: 11px;
+  color: rgba(244, 237, 224, 0.4);
+  margin-left: 4px;
+  font-weight: 400;
+}
+
+/* Corpo do card — as 2 óticas */
+.rota-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--rule);
+}
+
+.otica-col {
+  padding: 28px;
+  border-right: 1px solid var(--rule);
+  position: relative;
+}
+.otica-col:last-child { border-right: none; background: rgba(233, 162, 59, 0.025); }
+
+.otica-tag {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.otica-title {
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  color: var(--paper);
+}
+
+.otica-desc {
+  font-size: 11px;
+  color: rgba(244, 237, 224, 0.5);
+  line-height: 1.5;
+  margin-bottom: 22px;
+  min-height: 32px;
+}
+
+.otica-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 16px;
+}
+
+.otica-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-feature-settings: 'tnum';
+}
+.otica-line .lbl { color: rgba(244, 237, 224, 0.6); font-family: 'Manrope', sans-serif; }
+.otica-line .val { color: var(--paper); font-weight: 500; }
+
+.otica-totals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule-strong);
+}
+
+.otica-tot {
+  padding: 14px 14px;
+  border-right: 1px solid var(--rule-strong);
+}
+.otica-tot:last-child { border-right: none; background: rgba(233, 162, 59, 0.06); }
+
+.otica-tot-lbl {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(244, 237, 224, 0.55);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.otica-tot-val {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 500;
+  font-feature-settings: 'tnum';
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+.otica-tot:last-child .otica-tot-val { color: var(--amber); }
+
+.otica-delta {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(232, 98, 74, 0.08);
+  border-left: 3px solid var(--coral);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.otica-delta-lbl {
+  color: rgba(244, 237, 224, 0.75);
+  font-family: 'Manrope', sans-serif;
+}
+
+.otica-delta-val {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--coral);
+  font-weight: 600;
+  font-feature-settings: 'tnum';
+}
+
+/* Footer do card */
+.rota-card-foot {
+  padding: 18px 32px;
+  background: var(--ink-700);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(244, 237, 224, 0.55);
+  border-top: 1px solid var(--rule);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rota-card-foot strong {
+  color: var(--moss);
+  font-weight: 600;
+}
+
+/* ============ CONSOLIDADO ============ */
+.consol {
+  background: linear-gradient(135deg, var(--ink-800), var(--ink-700));
+  border: 1px solid var(--amber);
+  padding: 48px 44px;
+  margin-top: 56px;
+  position: relative;
+}
+
+.consol::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: var(--amber);
+}
+
+.consol-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.consol-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 32px;
+  line-height: 1.15;
+}
+
+.consol-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule-strong);
+}
+
+.consol-col {
+  padding: 30px 28px;
+  border-right: 1px solid var(--rule-strong);
+}
+.consol-col:last-child { border-right: none; background: rgba(233, 162, 59, 0.04); }
+
+.consol-col-head {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(244, 237, 224, 0.55);
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+.consol-col-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  background: var(--amber);
+  color: var(--ink-900);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  margin-left: 8px;
+}
+
+.consol-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  gap: 12px;
+}
+
+.consol-line .lbl {
+  font-family: 'Manrope', sans-serif;
+  color: rgba(244, 237, 224, 0.7);
+}
+
+.consol-line .val { font-feature-settings: 'tnum'; font-weight: 500; }
+
+.consol-line.total {
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--amber);
+  border-bottom: none;
+}
+
+.consol-line.total .lbl {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+}
+
+.consol-line.total .val {
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.consol-col:last-child .consol-line.total .val { color: var(--amber); }
+
+.consol-delta {
+  margin-top: 32px;
+  padding: 22px 28px;
+  background: var(--ink-900);
+  border: 1px solid var(--coral);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.consol-delta-lbl {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.consol-delta-val {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(28px, 3.6vw, 40px);
+  font-weight: 500;
+  color: var(--coral);
+  font-feature-settings: 'tnum';
+}
+
+.consol-delta-sub {
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(244, 237, 224, 0.6);
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* ============ JUSTIFICATIVA ============ */
+.argument-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.argument {
+  padding: 36px 28px;
+  border: 1px solid var(--rule-strong);
+  background: var(--ink-800);
+}
+
+.argument-num {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 60px;
+  font-weight: 300;
+  color: var(--amber);
+  line-height: 0.8;
+  margin-bottom: 24px;
+  font-variation-settings: 'opsz' 144;
+}
+
+.argument-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin-bottom: 16px;
+}
+
+.argument-body {
+  font-size: 14px;
+  color: rgba(244, 237, 224, 0.7);
+  line-height: 1.7;
+}
+
+/* ============ FECHAMENTO ============ */
+.closing {
+  background: var(--ink-800);
+  padding: 96px var(--pad-x) 80px;
+  border-top: 1px solid var(--amber);
+  position: relative;
+  text-align: center;
+}
+
+.closing::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 50%;
+  transform: translateX(-50%);
+  width: 80px; height: 2px;
+  background: var(--amber);
+}
+
+.closing-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 32px;
+  font-weight: 600;
+}
+
+.closing-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(32px, 5vw, 60px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  max-width: 900px;
+  margin: 0 auto 28px;
+  font-variation-settings: 'opsz' 144;
+}
+
+.closing-title em { font-style: italic; color: var(--amber); }
+
+.closing-sub {
+  font-size: 16px;
+  color: rgba(244, 237, 224, 0.65);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+footer {
+  padding: 24px var(--pad-x);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244, 237, 224, 0.4);
+  font-weight: 500;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ============ RESPONSIVE — TABLET ============ */
+@media (max-width: 1280px) {
+  .rotas-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1024px) {
+  :root { --pad-x: 36px; --pad-y: 72px; }
+  .hero { gap: 48px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .prem-grid { grid-template-columns: repeat(3, 1fr); }
+  .argument-grid { grid-template-columns: 1fr; gap: 20px; }
+  .meta { display: none; }
+}
+
+/* ============ RESPONSIVE — MOBILE ============ */
+@media (max-width: 720px) {
+  :root { --pad-x: 20px; --pad-y: 56px; }
+
+  header { padding: 18px var(--pad-x); }
+  .brand { font-size: 14px; gap: 10px; }
+  .brand-mark { width: 30px; height: 30px; font-size: 11px; }
+  .brand-text { font-size: 13px; }
+
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 56px var(--pad-x) 48px;
+  }
+  .hero::after { display: none; }
+  .eyebrow { font-size: 10px; margin-bottom: 20px; }
+  .hero-sub { font-size: 15px; }
+  .hero-stat-foot { flex-direction: column; gap: 8px; font-size: 12px; }
+
+  .section-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 40px; }
+  .section-num { padding-top: 0; }
+  .section-kicker { font-size: 13px; }
+
+  .kpi-grid { grid-template-columns: 1fr; }
+  .kpi { padding: 28px 24px; }
+  .kpi-value { font-size: 42px; }
+  .kpi-label { margin-bottom: 20px; }
+
+  /* PREMISSAS no mobile */
+  .premissas { padding: 26px 22px; margin-bottom: 36px; }
+  .premissas-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .premissas-title { font-size: 18px; }
+  .prem-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .prem-field input { font-size: 14px; padding: 10px 12px; }
+
+  /* CARDS DE ROTA no mobile */
+  .rotas-grid { gap: 20px; }
+  .rota-card-head { padding: 22px 22px 18px; }
+  .rota-card-name { font-size: 22px; margin-bottom: 14px; }
+  .rota-card-freq { gap: 10px; }
+  .rota-freq-val { font-size: 15px; }
+
+  .rota-card-body { grid-template-columns: 1fr; }
+  .otica-col {
+    padding: 22px;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+  }
+  .otica-col:last-child { border-bottom: none; }
+  .otica-desc { min-height: 0; margin-bottom: 16px; }
+  .otica-tot-val { font-size: 18px; }
+
+  .rota-card-foot { padding: 14px 22px; flex-direction: column; align-items: flex-start; gap: 6px; }
+
+  /* CONSOLIDADO no mobile */
+  .consol { padding: 32px 22px; margin-top: 36px; }
+  .consol-title { margin-bottom: 22px; }
+  .consol-grid { grid-template-columns: 1fr; }
+  .consol-col {
+    padding: 22px 20px;
+    border-right: none;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  .consol-col:last-child { border-bottom: none; }
+  .consol-delta { flex-direction: column; align-items: flex-start; padding: 18px 22px; }
+  .consol-delta-sub { text-align: left; }
+
+  /* JUSTIFICATIVA / FECHAMENTO */
+  .argument { padding: 28px 22px; }
+  .argument-num { font-size: 48px; margin-bottom: 18px; }
+  .argument-title { font-size: 19px; }
+
+  .closing { padding: 64px var(--pad-x) 56px; }
+  .closing-eyebrow { margin-bottom: 24px; }
+  .closing-sub { font-size: 14px; }
+
+  footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 10px;
+    padding: 20px var(--pad-x);
+  }
+}
+
+@media (max-width: 380px) {
+  .hero-stat-value { font-size: 56px; }
+  .kpi-value { font-size: 36px; }
+  .prem-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark">PR</div>
+    <span class="brand-text">Pleito Operacional · Logística</span>
+  </div>
+  <div class="meta">
+    <span>Período <strong>Jan–Mar 2026</strong></span>
+    <span>Rotas <strong>9</strong></span>
+    <span>Cargas <strong>154</strong></span>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div>
+    <div class="eyebrow">Análise para Diretoria · RH & Operações</div>
+    <h1 class="hero-title">Um ajudante por rota,<br><em>um pleito</em> sustentado por dados.</h1>
+    <p class="hero-sub">
+      Análise rota a rota mostrando o custo real de cada uma — com motorista, caminhão e o ajudante proposto — em duas óticas: <em>dedicação integral</em> e <em>rateio proporcional</em>.
+    </p>
+  </div>
+  <div class="hero-stat">
+    <div class="hero-stat-label">Faturamento mensal · 9 rotas</div>
+    <div class="hero-stat-value"><span class="currency">R$</span>1,39<span class="suffix">M</span></div>
+    <div class="hero-stat-foot">
+      <span>894 pedidos/mês</span>
+      <span>51 cargas/mês</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KPIs ============ -->
+<section>
+  <div class="section-head">
+    <div class="section-num">01 / NÚMEROS</div>
+    <div>
+      <div class="section-title">A operação <em>em escala</em>.</div>
+      <p class="section-kicker">
+        Agregado das 9 rotas no período de janeiro a março de 2026 — três meses, 13 semanas, 22 dias úteis por mês.
+      </p>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Cargas no período</div><div class="kpi-value">154</div><div class="kpi-foot"><span>3 meses</span><span class="kpi-trend">51,3/mês</span></div></div>
+    <div class="kpi"><div class="kpi-label">Pedidos entregues</div><div class="kpi-value">2.682</div><div class="kpi-foot"><span>17,4 ped/carga</span><span class="kpi-trend">894/mês</span></div></div>
+    <div class="kpi"><div class="kpi-label">Faturamento total</div><div class="kpi-value">R$ 4,18<span class="unit">M</span></div><div class="kpi-foot"><span>3 meses</span><span class="kpi-trend">R$ 1,39M/mês</span></div></div>
+    <div class="kpi"><div class="kpi-label">Ticket médio / carga</div><div class="kpi-value">R$ 27<span class="unit">.135</span></div><div class="kpi-foot"><span>Média ponderada</span><span class="kpi-trend">9 rotas</span></div></div>
+  </div>
+</section>
+
+<!-- ============ ANÁLISE ROTA A ROTA ============ -->
+<section>
+  <div class="section-head">
+    <div class="section-num">02 / ROTA A ROTA</div>
+    <div>
+      <div class="section-title">O custo de cada <em>rota</em>, em duas óticas.</div>
+      <p class="section-kicker">
+        Para cada rota mostramos quantas vezes ela roda por mês e por semana, e o custo mensal sob duas perspectivas. <strong>Integral</strong>: 1 motorista + 1 ajudante dedicados exclusivamente à rota. <strong>Proporcional</strong>: custo rateado pelo número de cargas que a rota efetivamente executou.
+      </p>
+    </div>
+  </div>
+
+  <!-- Premissas globais editáveis -->
+  <div class="premissas">
+    <div class="premissas-head">
+      <div class="premissas-title">Premissas (edite para recalcular)</div>
+      <div class="premissas-sub">Valores aplicados a todas as rotas</div>
+    </div>
+    <div class="prem-grid">
+      <div class="prem-field">
+        <label>Motorista / mês</label>
+        <input type="number" id="motMes" value="8242.94" step="0.01" inputmode="decimal">
+        <span class="hint">Base + encargos + benef. + H.E.</span>
+      </div>
+      <div class="prem-field">
+        <label>Ajudante / mês</label>
+        <input type="number" id="ajMes" value="4921.97" step="0.01" inputmode="decimal">
+        <span class="hint">Auxiliar de Logística</span>
+      </div>
+      <div class="prem-field">
+        <label>Custo por km</label>
+        <input type="number" id="custoKm" value="3.31" step="0.01" inputmode="decimal">
+        <span class="hint">R$ por km rodado</span>
+      </div>
+      <div class="prem-field">
+        <label>KM médio / carga</label>
+        <input type="number" id="kmCarga" value="350" step="10" inputmode="numeric">
+        <span class="hint">Preencher real depois</span>
+      </div>
+      <div class="prem-field">
+        <label>Dias úteis / mês</label>
+        <input type="number" id="diasUteis" value="22" step="1" inputmode="numeric">
+        <span class="hint">Base para rateio</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid de rotas -->
+  <div class="rotas-grid" id="rotasGrid"></div>
+
+  <!-- Consolidado -->
+  <div class="consol">
+    <div class="consol-eyebrow">Consolidado · 9 rotas</div>
+    <div class="consol-title">Soma dos custos mensais nas duas óticas.</div>
+
+    <div class="consol-grid">
+      <div class="consol-col">
+        <div class="consol-col-head">Ótica Integral<span class="consol-col-tag">9 duplas</span></div>
+        <div class="consol-line"><span class="lbl">Caminhão</span><span class="val mono" id="totIntCam">—</span></div>
+        <div class="consol-line"><span class="lbl">9 motoristas</span><span class="val mono" id="totIntMot">—</span></div>
+        <div class="consol-line"><span class="lbl">9 ajudantes</span><span class="val mono" id="totIntAj">—</span></div>
+        <div class="consol-line total"><span class="lbl">Total COM ajudante</span><span class="val mono" id="totIntCom">—</span></div>
+      </div>
+      <div class="consol-col">
+        <div class="consol-col-head">Ótica Proporcional<span class="consol-col-tag">Rateado</span></div>
+        <div class="consol-line"><span class="lbl">Caminhão</span><span class="val mono" id="totPropCam">—</span></div>
+        <div class="consol-line"><span class="lbl">Motoristas (rateio)</span><span class="val mono" id="totPropMot">—</span></div>
+        <div class="consol-line"><span class="lbl">Ajudantes (rateio)</span><span class="val mono" id="totPropAj">—</span></div>
+        <div class="consol-line total"><span class="lbl">Total COM ajudante</span><span class="val mono" id="totPropCom">—</span></div>
+      </div>
+    </div>
+
+    <div class="consol-delta">
+      <div>
+        <div class="consol-delta-lbl">Custo adicional do ajudante (proporcional)</div>
+        <div class="consol-delta-sub" style="text-align:left;margin-top:4px;">Representa <span id="pctFat">—</span> do faturamento mensal das 9 rotas (R$ 1,39 M)</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="consol-delta-val" id="deltaProp">—</div>
+        <div class="consol-delta-sub">Integral: <span id="deltaInt">—</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JUSTIFICATIVA ============ -->
+<section>
+  <div class="section-head">
+    <div class="section-num">03 / JUSTIFICATIVA</div>
+    <div>
+      <div class="section-title">Por que <em>agora</em>.</div>
+      <p class="section-kicker">Três argumentos que sustentam o pleito frente à diretoria.</p>
+    </div>
+  </div>
+
+  <div class="argument-grid">
+    <div class="argument">
+      <div class="argument-num">01</div>
+      <div class="argument-title">Volume justifica o investimento</div>
+      <p class="argument-body">
+        17,4 pedidos por carga em média, chegando a 21,8 em rotas como INTE SUL. Descarga sem ajudante é gargalo direto — o motorista vira operador, atendente e conferente ao mesmo tempo. Tempo perdido em doca é entrega que não acontece no prazo.
+      </p>
+    </div>
+    <div class="argument">
+      <div class="argument-num">02</div>
+      <div class="argument-title">Custo proporcionalmente baixo</div>
+      <p class="argument-body">
+        Mesmo na ótica integral (1 ajudante exclusivo por rota), o investimento total representa menos de 4% do faturamento mensal. Na ótica proporcional, o impacto cai para menos de 1%.
+      </p>
+    </div>
+    <div class="argument">
+      <div class="argument-num">03</div>
+      <div class="argument-title">Riscos não contabilizados</div>
+      <p class="argument-body">
+        Avarias por manuseio inadequado, afastamentos por esforço repetitivo, reentregas por atraso, perda de janela em centros de distribuição com hora marcada. O custo da ausência de ajudante não aparece na folha — aparece em devoluções, retrabalho e turnover de motorista.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FECHAMENTO ============ -->
+<div class="closing">
+  <div class="closing-eyebrow">Recomendação</div>
+  <h2 class="closing-title">Aprovar a contratação de <em>1 ajudante fixo</em> por motorista nas rotas analisadas.</h2>
+  <p class="closing-sub">
+    O custo do ajudante se paga em redução de avarias, devoluções, afastamentos e maior pontualidade nas janelas de entrega — riscos hoje não contabilizados na operação.
+  </p>
+</div>
+
+<footer>
+  <span>Fonte: Relatório de Cargas Jan–Mar/2026 · Dashboard Logístico · Aba CustoFuncionário</span>
+  <span>Confidencial · Uso interno</span>
+</footer>
+
+<script>
+const ROTAS = [{"rota": "APARECI|DOCA 10", "cargas_total": 18, "cargas_mes": 6.0, "cargas_semana": 1.38, "pedidos_total": 334, "pedidos_mes": 111.3, "pedidos_carga": 18.6, "fat_total": 458743.74, "fat_mes": 152914.58, "ticket_carga": 25485.76}, {"rota": "APARE|DOCA 10.A", "cargas_total": 16, "cargas_mes": 5.33, "cargas_semana": 1.23, "pedidos_total": 261, "pedidos_mes": 87.0, "pedidos_carga": 16.3, "fat_total": 342727.24, "fat_mes": 114242.41, "ticket_carga": 21420.45}, {"rota": "INTE SUL|DOCA 8", "cargas_total": 5, "cargas_mes": 1.67, "cargas_semana": 0.38, "pedidos_total": 109, "pedidos_mes": 36.3, "pedidos_carga": 21.8, "fat_total": 180530.3, "fat_mes": 60176.77, "ticket_carga": 36106.06}, {"rota": "INTE S|DOC 17.A", "cargas_total": 1, "cargas_mes": 0.33, "cargas_semana": 0.08, "pedidos_total": 18, "pedidos_mes": 6.0, "pedidos_carga": 18.0, "fat_total": 33695.21, "fat_mes": 11231.74, "ticket_carga": 33695.21}, {"rota": "INTE S|DOCA 8.A", "cargas_total": 4, "cargas_mes": 1.33, "cargas_semana": 0.31, "pedidos_total": 66, "pedidos_mes": 22.0, "pedidos_carga": 16.5, "fat_total": 111403.54, "fat_mes": 37134.51, "ticket_carga": 27850.89}, {"rota": "LITORAL|DOCA 2", "cargas_total": 42, "cargas_mes": 14.0, "cargas_semana": 3.23, "pedidos_total": 871, "pedidos_mes": 290.3, "pedidos_carga": 20.7, "fat_total": 1431188.81, "fat_mes": 477062.94, "ticket_carga": 34075.92}, {"rota": "MOGI|DOCA 11", "cargas_total": 48, "cargas_mes": 16.0, "cargas_semana": 3.69, "pedidos_total": 744, "pedidos_mes": 248.0, "pedidos_carga": 15.5, "fat_total": 1194551.42, "fat_mes": 398183.81, "ticket_carga": 24886.49}, {"rota": "SORO|DOCA 1", "cargas_total": 10, "cargas_mes": 3.33, "cargas_semana": 0.77, "pedidos_total": 153, "pedidos_mes": 51.0, "pedidos_carga": 15.3, "fat_total": 218196.87, "fat_mes": 72732.29, "ticket_carga": 21819.69}, {"rota": "SORO|DOCA 1.C", "cargas_total": 10, "cargas_mes": 3.33, "cargas_semana": 0.77, "pedidos_total": 126, "pedidos_mes": 42.0, "pedidos_carga": 12.6, "fat_total": 207321.44, "fat_mes": 69107.15, "ticket_carga": 20732.14}];
+
+const fmtBRL = (v) => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+const fmtBRL2 = (v) => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtNum = (v) => v.toLocaleString('pt-BR');
+const fmtPct = (v) => (v*100).toFixed(2).replace('.', ',') + '%';
+
+// Premissas
+const inputs = {
+  motMes: document.getElementById('motMes'),
+  ajMes: document.getElementById('ajMes'),
+  custoKm: document.getElementById('custoKm'),
+  kmCarga: document.getElementById('kmCarga'),
+  diasUteis: document.getElementById('diasUteis'),
+};
+
+// Ordenar por faturamento
+ROTAS.sort((a,b) => b.fat_mes - a.fat_mes);
+
+// FAT total para o card de consolidado
+const FAT_MES_TOTAL = ROTAS.reduce((a,r) => a + r.fat_mes, 0);
+
+function buildRotaCard(r, i) {
+  return `
+    <div class="rota-card" data-rota="${r.rota}">
+      <div class="rota-card-head">
+        <div class="rota-card-rank">ROTA · ${String(i+1).padStart(2,'0')} / ${ROTAS.length}</div>
+        <div class="rota-card-name">${r.rota}</div>
+        <div class="rota-card-freq">
+          <div class="rota-freq-item">
+            <span class="rota-freq-lbl">Cargas/mês</span>
+            <span class="rota-freq-val mono" data-val="cmes">${r.cargas_mes.toString().replace('.', ',')}</span>
+          </div>
+          <div class="rota-freq-item">
+            <span class="rota-freq-lbl">Cargas/semana</span>
+            <span class="rota-freq-val mono" data-val="csem">${r.cargas_semana.toString().replace('.', ',')}</span>
+          </div>
+          <div class="rota-freq-item">
+            <span class="rota-freq-lbl">Pedidos/mês</span>
+            <span class="rota-freq-val mono" data-val="pmes">${r.pedidos_mes.toString().replace('.', ',')}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rota-card-body">
+        <!-- INTEGRAL -->
+        <div class="otica-col">
+          <div class="otica-tag">A · Integral</div>
+          <div class="otica-title">1 dupla dedicada</div>
+          <div class="otica-desc">Motorista e ajudante alocados 100% à rota, salário cheio</div>
+          <div class="otica-breakdown">
+            <div class="otica-line"><span class="lbl">Caminhão</span><span class="val" data-out="intCam">—</span></div>
+            <div class="otica-line"><span class="lbl">Motorista</span><span class="val" data-out="intMot">—</span></div>
+            <div class="otica-line"><span class="lbl">Ajudante</span><span class="val" data-out="intAj">—</span></div>
+          </div>
+          <div class="otica-totals">
+            <div class="otica-tot">
+              <div class="otica-tot-lbl">Sem ajud.</div>
+              <div class="otica-tot-val" data-out="intSem">—</div>
+            </div>
+            <div class="otica-tot">
+              <div class="otica-tot-lbl">Com ajud.</div>
+              <div class="otica-tot-val" data-out="intCom">—</div>
+            </div>
+          </div>
+          <div class="otica-delta">
+            <span class="otica-delta-lbl">Δ ajudante</span>
+            <span class="otica-delta-val" data-out="intDelta">—</span>
+          </div>
+        </div>
+
+        <!-- PROPORCIONAL -->
+        <div class="otica-col">
+          <div class="otica-tag">B · Proporcional</div>
+          <div class="otica-title">Custo rateado</div>
+          <div class="otica-desc">Apenas o que a rota efetivamente consumiu de motorista e ajudante</div>
+          <div class="otica-breakdown">
+            <div class="otica-line"><span class="lbl">Caminhão</span><span class="val" data-out="propCam">—</span></div>
+            <div class="otica-line"><span class="lbl">Motorista</span><span class="val" data-out="propMot">—</span></div>
+            <div class="otica-line"><span class="lbl">Ajudante</span><span class="val" data-out="propAj">—</span></div>
+          </div>
+          <div class="otica-totals">
+            <div class="otica-tot">
+              <div class="otica-tot-lbl">Sem ajud.</div>
+              <div class="otica-tot-val" data-out="propSem">—</div>
+            </div>
+            <div class="otica-tot">
+              <div class="otica-tot-lbl">Com ajud.</div>
+              <div class="otica-tot-val" data-out="propCom">—</div>
+            </div>
+          </div>
+          <div class="otica-delta">
+            <span class="otica-delta-lbl">Δ ajudante</span>
+            <span class="otica-delta-val" data-out="propDelta">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rota-card-foot">
+        <span>Faturamento/mês: <strong>${fmtBRL(r.fat_mes)}</strong></span>
+        <span>% custo COM ajud. (prop.): <strong data-out="propPct">—</strong></span>
+      </div>
+    </div>
+  `;
+}
+
+const grid = document.getElementById('rotasGrid');
+grid.innerHTML = ROTAS.map((r,i) => buildRotaCard(r,i)).join('');
+
+function recalc() {
+  const v = Object.fromEntries(Object.entries(inputs).map(([k,el]) => [k, parseFloat(el.value) || 0]));
+
+  // Totais consolidados
+  let totIntCam = 0, totIntMot = 0, totIntAj = 0;
+  let totPropCam = 0, totPropMot = 0, totPropAj = 0;
+
+  ROTAS.forEach((r, i) => {
+    const card = grid.children[i];
+
+    // ÓTICA INTEGRAL
+    const intCam = v.custoKm * v.kmCarga * r.cargas_mes;
+    const intMot = v.motMes;
+    const intAj = v.ajMes;
+    const intSem = intCam + intMot;
+    const intCom = intSem + intAj;
+
+    // ÓTICA PROPORCIONAL
+    const custoMotCarga = v.motMes / v.diasUteis;
+    const custoAjCarga = v.ajMes / v.diasUteis;
+    const propCam = v.custoKm * v.kmCarga * r.cargas_mes;
+    const propMot = custoMotCarga * r.cargas_mes;
+    const propAj = custoAjCarga * r.cargas_mes;
+    const propSem = propCam + propMot;
+    const propCom = propSem + propAj;
+
+    // Preencher card
+    const set = (k, val) => {
+      const el = card.querySelector(`[data-out="${k}"]`);
+      if (el) el.textContent = val;
+    };
+
+    set('intCam', fmtBRL2(intCam));
+    set('intMot', fmtBRL2(intMot));
+    set('intAj', fmtBRL2(intAj));
+    set('intSem', fmtBRL(intSem));
+    set('intCom', fmtBRL(intCom));
+    set('intDelta', '+' + fmtBRL2(intAj));
+
+    set('propCam', fmtBRL2(propCam));
+    set('propMot', fmtBRL2(propMot));
+    set('propAj', fmtBRL2(propAj));
+    set('propSem', fmtBRL(propSem));
+    set('propCom', fmtBRL(propCom));
+    set('propDelta', '+' + fmtBRL2(propAj));
+    set('propPct', r.fat_mes > 0 ? fmtPct(propCom / r.fat_mes) : '—');
+
+    // Acumular
+    totIntCam += intCam;
+    totIntMot += intMot;
+    totIntAj += intAj;
+    totPropCam += propCam;
+    totPropMot += propMot;
+    totPropAj += propAj;
+  });
+
+  // Consolidado
+  document.getElementById('totIntCam').textContent = fmtBRL(totIntCam);
+  document.getElementById('totIntMot').textContent = fmtBRL(totIntMot);
+  document.getElementById('totIntAj').textContent = fmtBRL(totIntAj);
+  document.getElementById('totIntCom').textContent = fmtBRL(totIntCam + totIntMot + totIntAj);
+
+  document.getElementById('totPropCam').textContent = fmtBRL(totPropCam);
+  document.getElementById('totPropMot').textContent = fmtBRL(totPropMot);
+  document.getElementById('totPropAj').textContent = fmtBRL(totPropAj);
+  document.getElementById('totPropCom').textContent = fmtBRL(totPropCam + totPropMot + totPropAj);
+
+  document.getElementById('deltaProp').textContent = '+' + fmtBRL(totPropAj);
+  document.getElementById('deltaInt').textContent = '+' + fmtBRL(totIntAj);
+  document.getElementById('pctFat').textContent = fmtPct(totPropAj / FAT_MES_TOTAL);
+}
+
+Object.values(inputs).forEach(el => el.addEventListener('input', recalc));
+recalc();
+</script>
+</body>
+</html>
