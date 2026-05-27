@@ -3,1320 +3,3880 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pleito · Ajudante por Rota — Análise Executiva</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Organograma Executivo — Logística</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-:root {
-  --ink-900: #0a1418;
-  --ink-800: #0f1d23;
-  --ink-700: #142933;
-  --ink-600: #1d3741;
-  --ink-500: #2a4a57;
-  --ink-400: #3d6675;
-  --paper: #f4ede0;
-  --paper-soft: #ebe3d3;
-  --amber: #e9a23b;
-  --amber-bright: #f5b94f;
-  --coral: #e8624a;
-  --moss: #7a9367;
-  --rule: rgba(244, 237, 224, 0.12);
-  --rule-strong: rgba(244, 237, 224, 0.25);
-  --pad-x: 56px;
-  --pad-y: 96px;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-
-body {
-  background: var(--ink-900);
-  color: var(--paper);
-  font-family: 'Manrope', sans-serif;
-  line-height: 1.5;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.93 0 0 0 0 0.88 0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.4;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-  z-index: 1000;
-}
-
-.mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: 'tnum'; }
-
-/* ============ HEADER ============ */
-header {
-  padding: 24px var(--pad-x);
-  border-bottom: 1px solid var(--rule);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  background: rgba(10, 20, 24, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  z-index: 100;
-  gap: 16px;
-}
-
-.brand {
-  font-family: 'Fraunces', serif;
-  font-weight: 500;
-  font-size: 17px;
-  letter-spacing: -0.02em;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.brand-mark {
-  width: 34px; height: 34px;
-  border: 1px solid var(--amber);
-  display: grid; place-items: center;
-  font-weight: 700;
-  color: var(--amber);
-  font-size: 13px;
-  font-family: 'JetBrains Mono', monospace;
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
-.brand-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-.meta {
-  display: flex;
-  gap: 28px;
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(244, 237, 224, 0.55);
-  font-weight: 500;
-}
-
-.meta strong {
-  color: var(--paper);
-  font-weight: 600;
-  margin-left: 6px;
-}
-
-/* ============ HERO ============ */
-.hero {
-  padding: 88px var(--pad-x) 64px;
-  display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: 72px;
-  align-items: end;
-  border-bottom: 1px solid var(--rule);
-  position: relative;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  bottom: -1px; right: var(--pad-x);
-  width: 180px; height: 1px;
-  background: var(--amber);
-}
-
-.eyebrow {
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--amber);
-  font-weight: 600;
-  margin-bottom: 28px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.1s forwards;
-}
-.eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--amber); flex-shrink: 0; }
-
-h1.hero-title {
-  font-family: 'Fraunces', serif;
-  font-weight: 400;
-  font-size: clamp(40px, 6.5vw, 88px);
-  line-height: 0.95;
-  letter-spacing: -0.035em;
-  margin-bottom: 32px;
-  font-variation-settings: 'opsz' 144;
-  opacity: 0;
-  animation: fadeUp 1s 0.2s forwards;
-}
-h1.hero-title em { font-style: italic; color: var(--amber); font-weight: 300; }
-
-.hero-sub {
-  font-size: 16px;
-  line-height: 1.65;
-  color: rgba(244, 237, 224, 0.7);
-  max-width: 480px;
-  opacity: 0;
-  animation: fadeUp 1s 0.35s forwards;
-}
-
-.hero-stat { opacity: 0; animation: fadeUp 1s 0.5s forwards; }
-
-.hero-stat-label {
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(244, 237, 224, 0.5);
-  font-weight: 600;
-  margin-bottom: 18px;
-}
-
-.hero-stat-value {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(64px, 9vw, 124px);
-  font-weight: 300;
-  line-height: 0.85;
-  letter-spacing: -0.045em;
-  font-variation-settings: 'opsz' 144;
-  font-feature-settings: 'tnum';
-}
-
-.hero-stat-value .currency { font-size: 0.4em; color: var(--amber); margin-right: 0.15em; vertical-align: 0.45em; font-weight: 400; }
-.hero-stat-value .suffix { font-size: 0.55em; color: rgba(244,237,224,0.5); font-weight: 300; }
-
-.hero-stat-foot {
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--rule);
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: rgba(244, 237, 224, 0.6);
-  font-family: 'JetBrains Mono', monospace;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ============ SECTIONS ============ */
-section {
-  padding: var(--pad-y) var(--pad-x);
-  border-bottom: 1px solid var(--rule);
-}
-
-.section-head {
-  display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: 32px;
-  margin-bottom: 56px;
-  align-items: baseline;
-}
-
-.section-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  color: var(--amber);
-  letter-spacing: 0.1em;
-  padding-top: 8px;
-  font-weight: 600;
-}
-
-.section-title {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(32px, 4.2vw, 54px);
-  font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: -0.025em;
-  font-variation-settings: 'opsz' 144;
-  max-width: 800px;
-}
-
-.section-title em { font-style: italic; color: var(--amber); }
-
-.section-kicker {
-  font-size: 14px;
-  color: rgba(244, 237, 224, 0.6);
-  max-width: 620px;
-  margin-top: 20px;
-  line-height: 1.65;
-}
-
-/* ============ KPI GRID ============ */
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-  border-top: 1px solid var(--rule-strong);
-  border-left: 1px solid var(--rule-strong);
-}
-
-.kpi {
-  padding: 40px 32px;
-  border-right: 1px solid var(--rule-strong);
-  border-bottom: 1px solid var(--rule-strong);
-  background: var(--ink-800);
-  transition: background 0.4s;
-  position: relative;
-  overflow: hidden;
-}
-.kpi:hover { background: var(--ink-700); }
-.kpi::before {
-  content: '';
-  position: absolute; top: 0; left: 0;
-  width: 0; height: 2px;
-  background: var(--amber);
-  transition: width 0.4s ease;
-}
-.kpi:hover::before { width: 100%; }
-
-.kpi-label {
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(244, 237, 224, 0.55);
-  font-weight: 600;
-  margin-bottom: 28px;
-}
-
-.kpi-value {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(40px, 4.5vw, 56px);
-  font-weight: 300;
-  line-height: 0.95;
-  letter-spacing: -0.035em;
-  font-feature-settings: 'tnum';
-  font-variation-settings: 'opsz' 144;
-}
-
-.kpi-value .unit { font-size: 0.4em; color: rgba(244, 237, 224, 0.5); margin-left: 6px; font-weight: 400; }
-
-.kpi-foot {
-  margin-top: 20px;
-  font-size: 12px;
-  color: rgba(244, 237, 224, 0.55);
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-family: 'JetBrains Mono', monospace;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.kpi-trend { color: var(--moss); font-weight: 500; }
-
-/* ============ PREMISSAS GLOBAIS (controles) ============ */
-.premissas {
-  background: var(--ink-800);
-  border: 1px solid var(--rule-strong);
-  padding: 36px 40px;
-  margin-bottom: 56px;
-}
-
-.premissas-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 28px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--rule);
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.premissas-title {
-  font-family: 'Fraunces', serif;
-  font-size: 22px;
-  font-weight: 500;
-  letter-spacing: -0.015em;
-}
-
-.premissas-sub {
-  font-size: 12px;
-  color: rgba(244, 237, 224, 0.55);
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.prem-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 24px;
-}
-
-.prem-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.prem-field label {
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(244, 237, 224, 0.55);
-  font-weight: 600;
-}
-
-.prem-field input {
-  background: var(--ink-900);
-  border: 1px solid var(--rule-strong);
-  color: var(--paper);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 16px;
-  padding: 12px 14px;
-  font-weight: 500;
-  font-feature-settings: 'tnum';
-  border-radius: 0;
-  transition: border 0.2s;
-  -moz-appearance: textfield;
-}
-.prem-field input::-webkit-outer-spin-button,
-.prem-field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.prem-field input:focus { outline: none; border-color: var(--amber); }
-
-.prem-field .hint {
-  font-size: 11px;
-  color: rgba(244, 237, 224, 0.4);
-  font-family: 'JetBrains Mono', monospace;
-}
-
-/* ============ CARDS DE ROTA (núcleo da apresentação) ============ */
-.rotas-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 28px;
-}
-
-.rota-card {
-  background: var(--ink-800);
-  border: 1px solid var(--rule-strong);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.rota-card-head {
-  padding: 28px 32px 24px;
-  border-bottom: 1px solid var(--rule);
-  background: var(--ink-700);
-}
-
-.rota-card-rank {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--amber);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  margin-bottom: 10px;
-}
-
-.rota-card-name {
-  font-family: 'Fraunces', serif;
-  font-size: 28px;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  margin-bottom: 18px;
-}
-
-.rota-card-freq {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  padding-top: 16px;
-  border-top: 1px solid var(--rule);
-}
-
-.rota-freq-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.rota-freq-lbl {
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(244, 237, 224, 0.5);
-  font-weight: 600;
-}
-
-.rota-freq-val {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 18px;
-  color: var(--paper);
-  font-weight: 500;
-  font-feature-settings: 'tnum';
-}
-
-.rota-freq-val .sub {
-  font-size: 11px;
-  color: rgba(244, 237, 224, 0.4);
-  margin-left: 4px;
-  font-weight: 400;
-}
-
-/* Corpo do card — as 2 óticas */
-.rota-card-body {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-top: 1px solid var(--rule);
-}
-
-.otica-col {
-  padding: 28px;
-  border-right: 1px solid var(--rule);
-  position: relative;
-}
-.otica-col:last-child { border-right: none; background: rgba(233, 162, 59, 0.025); }
-
-.otica-tag {
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--amber);
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.otica-title {
-  font-family: 'Fraunces', serif;
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  margin-bottom: 4px;
-  color: var(--paper);
-}
-
-.otica-desc {
-  font-size: 11px;
-  color: rgba(244, 237, 224, 0.5);
-  line-height: 1.5;
-  margin-bottom: 22px;
-  min-height: 32px;
-}
-
-.otica-breakdown {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 14px 0;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
-  margin-bottom: 16px;
-}
-
-.otica-line {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  font-family: 'JetBrains Mono', monospace;
-  font-feature-settings: 'tnum';
-}
-.otica-line .lbl { color: rgba(244, 237, 224, 0.6); font-family: 'Manrope', sans-serif; }
-.otica-line .val { color: var(--paper); font-weight: 500; }
-
-.otica-totals {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  border: 1px solid var(--rule-strong);
-}
-
-.otica-tot {
-  padding: 14px 14px;
-  border-right: 1px solid var(--rule-strong);
-}
-.otica-tot:last-child { border-right: none; background: rgba(233, 162, 59, 0.06); }
-
-.otica-tot-lbl {
-  font-size: 9px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(244, 237, 224, 0.55);
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.otica-tot-val {
-  font-family: 'Fraunces', serif;
-  font-size: 20px;
-  font-weight: 500;
-  font-feature-settings: 'tnum';
-  letter-spacing: -0.01em;
-  line-height: 1.1;
-}
-.otica-tot:last-child .otica-tot-val { color: var(--amber); }
-
-.otica-delta {
-  margin-top: 14px;
-  padding: 12px 14px;
-  background: rgba(232, 98, 74, 0.08);
-  border-left: 3px solid var(--coral);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-}
-
-.otica-delta-lbl {
-  color: rgba(244, 237, 224, 0.75);
-  font-family: 'Manrope', sans-serif;
-}
-
-.otica-delta-val {
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--coral);
-  font-weight: 600;
-  font-feature-settings: 'tnum';
-}
-
-/* Footer do card */
-.rota-card-foot {
-  padding: 18px 32px;
-  background: var(--ink-700);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  color: rgba(244, 237, 224, 0.55);
-  border-top: 1px solid var(--rule);
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.rota-card-foot strong {
-  color: var(--moss);
-  font-weight: 600;
-}
-
-/* ============ CONSOLIDADO ============ */
-.consol {
-  background: linear-gradient(135deg, var(--ink-800), var(--ink-700));
-  border: 1px solid var(--amber);
-  padding: 48px 44px;
-  margin-top: 56px;
-  position: relative;
-}
-
-.consol::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 2px;
-  background: var(--amber);
-}
-
-.consol-eyebrow {
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--amber);
-  font-weight: 600;
-  margin-bottom: 14px;
-}
-
-.consol-title {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(26px, 3vw, 36px);
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  margin-bottom: 32px;
-  line-height: 1.15;
-}
-
-.consol-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  border: 1px solid var(--rule-strong);
-}
-
-.consol-col {
-  padding: 30px 28px;
-  border-right: 1px solid var(--rule-strong);
-}
-.consol-col:last-child { border-right: none; background: rgba(233, 162, 59, 0.04); }
-
-.consol-col-head {
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(244, 237, 224, 0.55);
-  font-weight: 600;
-  margin-bottom: 18px;
-}
-
-.consol-col-tag {
-  display: inline-block;
-  padding: 3px 8px;
-  background: var(--amber);
-  color: var(--ink-900);
-  font-size: 9px;
-  letter-spacing: 0.18em;
-  font-weight: 700;
-  margin-left: 8px;
-}
-
-.consol-line {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--rule);
-  font-size: 13px;
-  font-family: 'JetBrains Mono', monospace;
-  gap: 12px;
-}
-
-.consol-line .lbl {
-  font-family: 'Manrope', sans-serif;
-  color: rgba(244, 237, 224, 0.7);
-}
-
-.consol-line .val { font-feature-settings: 'tnum'; font-weight: 500; }
-
-.consol-line.total {
-  margin-top: 8px;
-  padding-top: 14px;
-  border-top: 1px solid var(--amber);
-  border-bottom: none;
-}
-
-.consol-line.total .lbl {
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 11px;
-}
-
-.consol-line.total .val {
-  font-family: 'Fraunces', serif;
-  font-size: 24px;
-  font-weight: 500;
-}
-
-.consol-col:last-child .consol-line.total .val { color: var(--amber); }
-
-.consol-delta {
-  margin-top: 32px;
-  padding: 22px 28px;
-  background: var(--ink-900);
-  border: 1px solid var(--coral);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.consol-delta-lbl {
-  font-family: 'Fraunces', serif;
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-.consol-delta-val {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(28px, 3.6vw, 40px);
-  font-weight: 500;
-  color: var(--coral);
-  font-feature-settings: 'tnum';
-}
-
-.consol-delta-sub {
-  font-size: 12px;
-  font-family: 'JetBrains Mono', monospace;
-  color: rgba(244, 237, 224, 0.6);
-  margin-top: 4px;
-  text-align: right;
-}
-
-/* ============ JUSTIFICATIVA ============ */
-.argument-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-}
-
-.argument {
-  padding: 36px 28px;
-  border: 1px solid var(--rule-strong);
-  background: var(--ink-800);
-}
-
-.argument-num {
-  font-family: 'Fraunces', serif;
-  font-style: italic;
-  font-size: 60px;
-  font-weight: 300;
-  color: var(--amber);
-  line-height: 0.8;
-  margin-bottom: 24px;
-  font-variation-settings: 'opsz' 144;
-}
-
-.argument-title {
-  font-family: 'Fraunces', serif;
-  font-size: 22px;
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
-  margin-bottom: 16px;
-}
-
-.argument-body {
-  font-size: 14px;
-  color: rgba(244, 237, 224, 0.7);
-  line-height: 1.7;
-}
-
-/* ============ FECHAMENTO ============ */
-.closing {
-  background: var(--ink-800);
-  padding: 96px var(--pad-x) 80px;
-  border-top: 1px solid var(--amber);
-  position: relative;
-  text-align: center;
-}
-
-.closing::before {
-  content: '';
-  position: absolute;
-  top: -1px; left: 50%;
-  transform: translateX(-50%);
-  width: 80px; height: 2px;
-  background: var(--amber);
-}
-
-.closing-eyebrow {
-  font-size: 11px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--amber);
-  margin-bottom: 32px;
-  font-weight: 600;
-}
-
-.closing-title {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(32px, 5vw, 60px);
-  font-weight: 400;
-  line-height: 1.08;
-  letter-spacing: -0.03em;
-  max-width: 900px;
-  margin: 0 auto 28px;
-  font-variation-settings: 'opsz' 144;
-}
-
-.closing-title em { font-style: italic; color: var(--amber); }
-
-.closing-sub {
-  font-size: 16px;
-  color: rgba(244, 237, 224, 0.65);
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.7;
-}
-
-footer {
-  padding: 24px var(--pad-x);
-  border-top: 1px solid var(--rule);
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(244, 237, 224, 0.4);
-  font-weight: 500;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-/* ============ RESPONSIVE — TABLET ============ */
-@media (max-width: 1280px) {
-  .rotas-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 1024px) {
-  :root { --pad-x: 36px; --pad-y: 72px; }
-  .hero { gap: 48px; }
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-  .prem-grid { grid-template-columns: repeat(3, 1fr); }
-  .argument-grid { grid-template-columns: 1fr; gap: 20px; }
-  .meta { display: none; }
-}
-
-/* ============ RESPONSIVE — MOBILE ============ */
-@media (max-width: 720px) {
-  :root { --pad-x: 20px; --pad-y: 56px; }
-
-  header { padding: 18px var(--pad-x); }
-  .brand { font-size: 14px; gap: 10px; }
-  .brand-mark { width: 30px; height: 30px; font-size: 11px; }
-  .brand-text { font-size: 13px; }
-
-  .hero {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    padding: 56px var(--pad-x) 48px;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg-0: #0d1117;
+    --bg-1: #161b22;
+    --bg-2: #1c2230;
+    --paper: rgba(28, 34, 48, 0.65);
+    --paper-solid: #1c2230;
+    --ink: #f1f5f9;
+    --ink-2: #cbd5e1;
+    --muted: #94a3b8;
+    --muted-2: #64748b;
+    --line: rgba(148, 163, 184, 0.14);
+    --line-2: rgba(148, 163, 184, 0.28);
+    --gold: #d4af37;
+    --gold-soft: rgba(212, 175, 55, 0.12);
+    --accent: #c0a45c;
   }
-  .hero::after { display: none; }
-  .eyebrow { font-size: 10px; margin-bottom: 20px; }
-  .hero-sub { font-size: 15px; }
-  .hero-stat-foot { flex-direction: column; gap: 8px; font-size: 12px; }
-
-  .section-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 40px; }
-  .section-num { padding-top: 0; }
-  .section-kicker { font-size: 13px; }
-
-  .kpi-grid { grid-template-columns: 1fr; }
-  .kpi { padding: 28px 24px; }
-  .kpi-value { font-size: 42px; }
-  .kpi-label { margin-bottom: 20px; }
-
-  /* PREMISSAS no mobile */
-  .premissas { padding: 26px 22px; margin-bottom: 36px; }
-  .premissas-head { flex-direction: column; align-items: flex-start; gap: 6px; }
-  .premissas-title { font-size: 18px; }
-  .prem-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
-  .prem-field input { font-size: 14px; padding: 10px 12px; }
-
-  /* CARDS DE ROTA no mobile */
-  .rotas-grid { gap: 20px; }
-  .rota-card-head { padding: 22px 22px 18px; }
-  .rota-card-name { font-size: 22px; margin-bottom: 14px; }
-  .rota-card-freq { gap: 10px; }
-  .rota-freq-val { font-size: 15px; }
-
-  .rota-card-body { grid-template-columns: 1fr; }
-  .otica-col {
-    padding: 22px;
-    border-right: none;
-    border-bottom: 1px solid var(--rule);
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(212, 175, 55, 0.08), transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(59, 89, 152, 0.10), transparent 55%),
+      linear-gradient(180deg, #0d1117 0%, #0a0e16 100%);
+    background-attachment: fixed;
+    color: var(--ink);
+    padding: 40px 32px 60px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
   }
-  .otica-col:last-child { border-bottom: none; }
-  .otica-desc { min-height: 0; margin-bottom: 16px; }
-  .otica-tot-val { font-size: 18px; }
+  .container { max-width: 1400px; margin: 0 auto; }
 
-  .rota-card-foot { padding: 14px 22px; flex-direction: column; align-items: flex-start; gap: 6px; }
-
-  /* CONSOLIDADO no mobile */
-  .consol { padding: 32px 22px; margin-top: 36px; }
-  .consol-title { margin-bottom: 22px; }
-  .consol-grid { grid-template-columns: 1fr; }
-  .consol-col {
-    padding: 22px 20px;
-    border-right: none;
-    border-bottom: 1px solid var(--rule-strong);
+  /* ===== Cabeçalho executivo ===== */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 36px;
   }
-  .consol-col:last-child { border-bottom: none; }
-  .consol-delta { flex-direction: column; align-items: flex-start; padding: 18px 22px; }
-  .consol-delta-sub { text-align: left; }
+  .header-left h1 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 0%, #d4af37 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  .header-left .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+  }
+  .header-right {
+    display: flex;
+    gap: 8px;
+  }
+  .btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line-2);
+    color: var(--ink-2);
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.3px;
+    transition: all 0.2s;
+    backdrop-filter: blur(10px);
+  }
+  .btn:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--gold);
+    color: #fff;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #d4af37, #b8941f);
+    color: #0d1117;
+    border-color: var(--gold);
+    font-weight: 600;
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #e6c453, #d4af37);
+    color: #0d1117;
+    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);
+  }
 
-  /* JUSTIFICATIVA / FECHAMENTO */
-  .argument { padding: 28px 22px; }
-  .argument-num { font-size: 48px; margin-bottom: 18px; }
-  .argument-title { font-size: 19px; }
+  /* ===== KPIs ===== */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    backdrop-filter: blur(10px);
+  }
+  .kpi {
+    background: var(--paper);
+    padding: 18px 20px;
+    backdrop-filter: blur(20px);
+  }
+  .kpi-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .kpi-info {
+    background: transparent;
+    border: none;
+    color: var(--muted-2);
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 50%;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .kpi-info:hover {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--gold);
+    transform: scale(1.15);
+  }
+  .kpi-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--muted-2);
+    margin-top: 4px;
+  }
 
-  .closing { padding: 64px var(--pad-x) 56px; }
-  .closing-eyebrow { margin-bottom: 24px; }
-  .closing-sub { font-size: 14px; }
+  /* ===== Árvore hierárquica ===== */
+  .tree {
+    position: relative;
+  }
+  .tree-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: nowrap;
+    margin-bottom: 0;
+    position: relative;
+  }
+  .tree-row.row-supervisors {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .tree-line {
+    height: 28px;
+    position: relative;
+  }
+  .tree-line::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--line-2), transparent);
+  }
 
-  footer {
+  /* ===== Card executivo ===== */
+  .exec-card {
+    background: var(--paper);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    padding: 16px 18px;
+    min-width: 220px;
+    max-width: 280px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    text-align: left;
+  }
+  .exec-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), transparent 60%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .exec-card:hover {
+    border-color: var(--gold);
+    background: rgba(28, 34, 48, 0.85);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 20px rgba(212, 175, 55, 0.08);
+    transform: translateY(-2px);
+  }
+  .exec-card:hover::before { opacity: 1; }
+  .exec-card .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c0a45c, #8a7332);
+    color: #0d1117;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+  }
+  .exec-card .avatar svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+  .exec-card .nome {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 2px;
+    line-height: 1.3;
+  }
+  .exec-card .cargo {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.2px;
+  }
+  .exec-card .team-info {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--ink-2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .exec-card .team-info .count {
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .exec-card.expandable .team-info::after {
+    content: '▾';
+    font-size: 10px;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+  .exec-card.expanded {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.08);
+  }
+  .exec-card.expanded .team-info::after {
+    transform: rotate(180deg);
+    color: var(--gold);
+  }
+
+  /* Tamanhos / cores por nível */
+  .exec-card.level-diretor {
+    min-width: 260px;
+    border-color: var(--gold);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.10), rgba(28, 34, 48, 0.7));
+  }
+  .exec-card.level-diretor .avatar {
+    background: linear-gradient(135deg, #f4d574, #d4af37);
+    width: 48px;
+    height: 48px;
+    color: #0d1117;
+  }
+  .exec-card.level-diretor .avatar svg {
+    width: 28px;
+    height: 28px;
+  }
+  .exec-card.level-diretor .nome { font-size: 15px; }
+
+  .exec-card.level-gerente {
+    min-width: 240px;
+    border-color: rgba(168, 142, 76, 0.4);
+  }
+  .exec-card.level-gerente .avatar {
+    background: linear-gradient(135deg, #a88e4c, #6e5a2a);
+  }
+
+  .exec-card.level-supervisor .avatar { background: linear-gradient(135deg, #9ca3af, #6b7280); color: #fff; }
+  .exec-card.level-lider .avatar { background: linear-gradient(135deg, #7dd3c0, #4a9080); color: #0d1117; }
+  .exec-card.level-analista .avatar { background: linear-gradient(135deg, #8db5d8, #4b7fa8); color: #0d1117; }
+  .exec-card.level-assistente .avatar { background: linear-gradient(135deg, #c1d870, #8fa844); color: #0d1117; }
+  .exec-card.level-conferente .avatar { background: linear-gradient(135deg, #e8c068, #b8941f); color: #0d1117; }
+  .exec-card.level-aux .avatar { background: linear-gradient(135deg, #8b95a3, #525a67); color: #fff; }
+  .exec-card.level-motorista .avatar { background: linear-gradient(135deg, #d68aa8, #a04b6e); color: #fff; }
+  .exec-card.level-servicos .avatar { background: linear-gradient(135deg, #b794d4, #7a5099); color: #fff; }
+
+  /* Card sutil — para áreas independentes (sem expansão, menos destaque) */
+  .exec-card.subtle {
+    min-width: 180px;
+    max-width: 220px;
+    padding: 12px 14px;
+    background: rgba(28, 34, 48, 0.4);
+    border: 1px dashed var(--line-2);
+  }
+  .exec-card.subtle .avatar {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 8px;
+  }
+  .exec-card.subtle .avatar svg {
+    width: 17px;
+    height: 17px;
+  }
+  .exec-card.subtle .nome { font-size: 12px; }
+  .exec-card.subtle .cargo { font-size: 10px; }
+  .exec-card.subtle:hover {
+    border-style: solid;
+    border-color: var(--gold);
+  }
+
+  /* ===== Equipe expandida ===== */
+  .team-panel {
+    display: none;
+    background: var(--paper);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--line-2);
+    border-radius: 12px;
+    margin-top: 16px;
+    padding: 20px 24px;
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: slideDown 0.3s ease;
+    position: relative;
+  }
+  .team-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.5;
+  }
+  .team-panel.show { display: block; }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .team-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .team-panel-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.2px;
+  }
+  .team-panel-title span {
+    color: var(--muted);
+    font-weight: 400;
+    margin-left: 6px;
+  }
+  .team-panel-section {
+    margin-bottom: 14px;
+  }
+  .team-panel-section:last-child { margin-bottom: 0; }
+
+  /* Seção destacada (Inventário, etc) */
+  .team-panel-section.highlighted {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(212, 175, 55, 0.02));
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 16px;
+    position: relative;
+  }
+  .team-panel-section.highlighted::before {
+    content: '★';
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    color: var(--gold);
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  .team-panel-section.highlighted .team-panel-section-title {
+    color: var(--gold);
+    margin-bottom: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .team-panel-section.highlighted .team-panel-section-title::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 8px var(--gold);
+  }
+  .team-panel-section.highlighted .team-member .mini-avatar {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--gold);
+    border-color: rgba(212, 175, 55, 0.4);
+  }
+  .team-panel-section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .team-panel-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 6px;
+  }
+  .team-member {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .team-member:hover { background: var(--gold-soft); }
+  .team-member .mini-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(148, 163, 184, 0.15);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--line);
+  }
+  .team-member .mini-avatar svg {
+    width: 15px;
+    height: 15px;
+    display: block;
+  }
+  .team-member .member-info { min-width: 0; }
+  .team-member .member-name {
+    font-size: 12px;
+    color: var(--ink);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .team-member .member-role {
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .team-member .member-atrib-btn {
+    background: rgba(212, 175, 55, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: var(--gold);
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+  }
+  .team-member .member-atrib-btn:hover {
+    background: var(--gold);
+    color: #0d1117;
+    border-color: var(--gold);
+    transform: scale(1.05);
+  }
+
+  /* Linha de "vaga em aberto" — destaque diferente dos demais */
+  .team-member.vaga {
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(212, 175, 55, 0.04),
+      rgba(212, 175, 55, 0.04) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+    border: 1px dashed rgba(212, 175, 55, 0.4);
+  }
+  .team-member.vaga .mini-avatar {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--gold);
+    border-color: rgba(212, 175, 55, 0.4);
+    border-style: dashed;
+  }
+  .team-member.vaga .member-name {
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .team-member.vaga .member-role {
+    color: var(--gold);
+    opacity: 0.75;
+    font-style: italic;
+  }
+  .team-member .member-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #4ade80, #16a34a);
+    color: #052e16;
+    font-size: 8.5px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 6px;
+    vertical-align: middle;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+    animation: pulseTag 2s ease-in-out infinite;
+  }
+  @keyframes pulseTag {
+    0%, 100% { box-shadow: 0 0 8px rgba(74, 222, 128, 0.4); }
+    50% { box-shadow: 0 0 14px rgba(74, 222, 128, 0.8); }
+  }
+
+  /* ===== Seção de turnos ===== */
+  .shift-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 14px;
+    text-align: center;
+    margin-top: 36px;
+  }
+
+  /* ===== Rodapé ===== */
+  .footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    font-size: 11px;
+    color: var(--muted-2);
+    letter-spacing: 0.3px;
+  }
+  .footer-center { flex: 1; text-align: center; }
+  .footer .footer-brand {
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .footer-btn {
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: var(--gold);
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .footer-btn:hover {
+    background: var(--gold);
+    color: #0d1117;
+    border-color: var(--gold);
+  }
+
+  /* ===== Lista de histórico ===== */
+  .historico-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .historico-item:last-child { border-bottom: none; }
+  .historico-data {
+    flex-shrink: 0;
+    min-width: 86px;
+    padding-top: 2px;
+  }
+  .historico-data-valor {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .historico-info { flex: 1; }
+  .historico-tipo {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  .historico-tipo-Movimentação {
+    background: rgba(139, 188, 220, 0.15);
+    color: #8db5d8;
+    border: 1px solid rgba(139, 188, 220, 0.3);
+  }
+  .historico-tipo-Desligamento {
+    background: rgba(248, 113, 113, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(248, 113, 113, 0.3);
+  }
+  .historico-tipo-Promoção {
+    background: rgba(74, 222, 128, 0.15);
+    color: #86efac;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+  }
+  .historico-tipo-Reestruturação {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--gold);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+  }
+  .historico-tipo-Contratação {
+    background: rgba(193, 216, 112, 0.15);
+    color: #c1d870;
+    border: 1px solid rgba(193, 216, 112, 0.3);
+  }
+  .historico-desc {
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+
+  /* ===== Botão atribuições no card ===== */
+  .btn-atribuicoes {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: rgba(212, 175, 55, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: var(--gold);
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-atribuicoes + .btn-atribuicoes { margin-top: 6px; }
+  .btn-atribuicoes:hover {
+    background: var(--gold);
+    color: #0d1117;
+    border-color: var(--gold);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+  }
+
+  /* ===== Modal de atribuições ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.show { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-content {
+    background: linear-gradient(135deg, rgba(28, 34, 48, 0.98), rgba(13, 17, 23, 0.98));
+    border: 1px solid var(--line-2);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 760px;
+    max-height: 88vh;
+    overflow: hidden;
+    display: flex;
     flex-direction: column;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.6);
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-header {
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: linear-gradient(180deg, rgba(212, 175, 55, 0.06), transparent);
+  }
+  .modal-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .modal-header .modal-sub {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .modal-close {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--line-2);
+    color: var(--muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .modal-close:hover {
+    background: rgba(248, 113, 113, 0.15);
+    border-color: rgba(248, 113, 113, 0.4);
+    color: #fca5a5;
+  }
+  .modal-body {
+    padding: 20px 28px 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .atrib-categoria {
+    margin-bottom: 22px;
+  }
+  .atrib-categoria:last-child { margin-bottom: 0; }
+  .atrib-cat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .atrib-cat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .atrib-cat-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .atrib-cat-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .atrib-cat-count strong { color: var(--gold); }
+  .atrib-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .atrib-item {
+    display: flex;
     align-items: flex-start;
     gap: 10px;
-    font-size: 10px;
-    padding: 20px var(--pad-x);
+    padding: 9px 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    transition: background 0.15s, border-color 0.15s;
   }
-}
+  .atrib-item:hover {
+    background: rgba(212, 175, 55, 0.06);
+    border-color: rgba(212, 175, 55, 0.25);
+  }
+  .atrib-bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 6px rgba(212, 175, 55, 0.5);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+  .atrib-text {
+    font-size: 12px;
+    color: var(--ink-2);
+    line-height: 1.4;
+  }
+  .modal-footer {
+    padding: 16px 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: rgba(0,0,0,0.2);
+  }
+  .modal-footer-info {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+  }
+  .modal-footer-actions { display: flex; gap: 8px; }
 
-@media (max-width: 380px) {
-  .hero-stat-value { font-size: 56px; }
-  .kpi-value { font-size: 36px; }
-  .prem-grid { grid-template-columns: 1fr; }
-}
+  /* ===== Modo Apresentação (Fullscreen) ===== */
+  body.modo-apresentacao {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(212, 175, 55, 0.15), transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(59, 89, 152, 0.12), transparent 55%),
+      linear-gradient(180deg, #0a0e16 0%, #050810 100%) !important;
+  }
+  body.modo-apresentacao .container { max-width: 1600px; }
+  body.modo-apresentacao .header-left h1 { font-size: 40px !important; }
+  body.modo-apresentacao .header-left .subtitle { font-size: 16px; }
+  body.modo-apresentacao .kpi-grid {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+  body.modo-apresentacao .kpi-value { font-size: 38px !important; }
+  body.modo-apresentacao .kpi-label { font-size: 12px; }
+  body.modo-apresentacao .exec-card { transform: scale(1.04); }
+  body.modo-apresentacao .exec-card:hover { transform: scale(1.07) translateY(-2px); }
+  body.modo-apresentacao .nome { font-size: 14px !important; }
+  body.modo-apresentacao .cargo { font-size: 12px !important; }
+  body.modo-apresentacao .shift-section-title { font-size: 13px !important; }
+  body.modo-apresentacao #btnFullscreen {
+    background: var(--gold);
+    color: #0d1117;
+    border-color: var(--gold);
+    font-weight: 700;
+  }
+  .modo-apresentacao-hint {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: rgba(13, 17, 23, 0.92);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 10px 18px;
+    border-radius: 24px;
+    font-size: 11px;
+    color: var(--muted);
+    z-index: 999;
+    letter-spacing: 0.3px;
+  }
+  body.modo-apresentacao .modo-apresentacao-hint { display: block; }
+  .modo-apresentacao-hint kbd {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--line-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--gold);
+    margin: 0 3px;
+  }
+
+  /* ===== Seções do modal de info KPI ===== */
+  .info-kpi-secao {
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .info-kpi-secao:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .info-kpi-titulo {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .info-kpi-titulo::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 8px var(--gold);
+  }
+  .info-kpi-texto {
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+
+  /* ===== Régua do Span of Control ===== */
+  .regua-span { margin-top: 8px; }
+  .regua-numeros {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+  .regua-resumo {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 12px 22px;
+    background: rgba(212, 175, 55, 0.06);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 10px;
+  }
+  .regua-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .regua-num-destaque {
+    color: var(--gold);
+    font-size: 30px;
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+  }
+  .regua-divider {
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .regua-resumo-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-top: 8px;
+  }
+  .regua-barra {
+    position: relative;
+    height: 14px;
+    border-radius: 7px;
+    overflow: visible;
+    display: flex;
+    margin: 24px 0 12px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+  }
+  .regua-faixa {
+    height: 100%;
+  }
+  .regua-faixa-1 { width: 25%; background: linear-gradient(90deg, #ef4444, #f87171); border-radius: 7px 0 0 7px; }
+  .regua-faixa-2 { width: 25%; background: linear-gradient(90deg, #4ade80, #22c55e); }
+  .regua-faixa-3 { width: 25%; background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+  .regua-faixa-4 { width: 25%; background: linear-gradient(90deg, #ef4444, #dc2626); border-radius: 0 7px 7px 0; }
+  .regua-marcador {
+    position: absolute;
+    top: -10px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+  }
+  .regua-marcador-pin {
+    width: 4px;
+    height: 34px;
+    background: var(--ink);
+    box-shadow: 0 0 0 2px var(--paper-solid), 0 0 12px rgba(0,0,0,0.5);
+    border-radius: 2px;
+  }
+  .regua-marcador-valor {
+    margin-top: 6px;
+    background: var(--ink);
+    color: var(--gold);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1px solid var(--gold);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    font-variant-numeric: tabular-nums;
+  }
+  .regua-legenda {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .regua-legenda-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .regua-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .regua-status {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.02);
+    border-left: 3px solid;
+    border-radius: 6px;
+  }
+  .regua-status-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .regua-status-titulo {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .regua-status-desc {
+    font-size: 12px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg-1); }
+  ::-webkit-scrollbar-thumb { background: var(--bg-2); border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover { background: #2a3447; }
+
+  /* ===== Mobile ===== */
+  @media (max-width: 768px) {
+    body { padding: 20px 14px 40px; background-attachment: scroll; }
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .header-right { width: 100%; }
+    .btn { flex: 1; }
+    .tree-row { flex-direction: column; align-items: center; gap: 10px; }
+    .tree-line { height: 18px; }
+    .exec-card { width: 100%; max-width: 100%; }
+    .team-panel-list { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* Modal full-screen no mobile */
+    .modal-overlay { padding: 0; align-items: flex-end; }
+    .modal-content {
+      max-width: 100%;
+      max-height: 95vh;
+      border-radius: 16px 16px 0 0;
+      width: 100%;
+    }
+    .modal-header { padding: 18px 20px; }
+    .modal-header h2 { font-size: 16px; }
+    .modal-body { padding: 16px 20px 20px; }
+    .modal-footer { padding: 14px 20px; }
+    .atrib-list { grid-template-columns: 1fr; }
+    .atrib-cat-header { gap: 8px; }
+    .atrib-cat-title { font-size: 12px; }
+    .atrib-item { padding: 12px 14px; }
+    .atrib-text { font-size: 13px; }
+  }
+
+  /* ===== Impressão (PDF) — usa light mesmo em dark mode ===== */
+  @media print {
+    @page { size: A4; margin: 0; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    html, body {
+      padding: 0 !important;
+      margin: 0 !important;
+      background: #0d1117 !important;
+      color: #f1f5f9 !important;
+    }
+
+    /* Container principal recebe o fundo gradiente */
+    .container {
+      max-width: 100% !important;
+      padding: 0 !important;
+      background: linear-gradient(180deg, #0d1117 0%, #1c2230 100%) !important;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .header-right, .footer .footer-brand,
+    .btn-atribuicoes, .modal-overlay,
+    .kpi-info, .team-member .member-atrib-btn,
+    .exec-card.expandable .team-info::after,
+    .modo-apresentacao-hint, #btnFullscreen {
+      display: none !important;
+    }
+
+    .header {
+      padding: 40px 40px 24px !important;
+      border-bottom: 2px solid #d4af37 !important;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.10), transparent) !important;
+      page-break-after: avoid;
+    }
+    .header-left h1 {
+      font-size: 30px !important;
+      background: linear-gradient(135deg, #fff 0%, #d4af37 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+    }
+    .header-left .subtitle { color: #cbd5e1 !important; font-size: 13px !important; }
+
+    .kpi-grid {
+      margin: 24px 40px !important;
+      gap: 2px !important;
+      background: rgba(212, 175, 55, 0.3) !important;
+      border-radius: 12px !important;
+      border: none !important;
+      page-break-after: avoid;
+      grid-template-columns: repeat(4, 1fr) !important;
+    }
+    .kpi {
+      background: #1c2230 !important;
+      padding: 16px 14px !important;
+    }
+    .kpi-label { color: #cbd5e1 !important; font-size: 10px !important; }
+    .kpi-value { color: #d4af37 !important; font-size: 24px !important; }
+    .kpi-sub { color: #94a3b8 !important; font-size: 10px !important; }
+
+    .tree { padding: 0 40px; }
+    .shift-section-title { color: #d4af37 !important; margin-top: 18px !important; font-size: 11px !important; }
+    .tree-row {
+      flex-wrap: wrap !important;
+      page-break-inside: avoid;
+      gap: 10px !important;
+    }
+    .tree-line { height: 16px !important; }
+    .tree-line::before {
+      background: linear-gradient(180deg, transparent, #d4af37, transparent) !important;
+      opacity: 0.5;
+    }
+    .exec-card {
+      background: #1c2230 !important;
+      border: 1px solid rgba(212, 175, 55, 0.25) !important;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+      page-break-inside: avoid;
+      padding: 12px 14px !important;
+      min-width: 180px !important;
+    }
+    .exec-card .nome { color: #f1f5f9 !important; font-size: 12px !important; }
+    .exec-card .cargo { color: #cbd5e1 !important; font-size: 10px !important; }
+    .exec-card .team-info { color: #cbd5e1 !important; border-color: rgba(148, 163, 184, 0.2) !important; font-size: 10px !important; }
+    .exec-card .team-info .count { color: #d4af37 !important; font-weight: 700 !important; }
+    .exec-card .avatar { width: 32px !important; height: 32px !important; margin-bottom: 8px !important; }
+    .exec-card .avatar svg { width: 18px !important; height: 18px !important; }
+    .exec-card.level-diretor {
+      border: 1.5px solid #d4af37 !important;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), #1c2230) !important;
+    }
+    .exec-card.level-diretor .avatar { width: 40px !important; height: 40px !important; }
+    .exec-card.level-diretor .avatar svg { width: 24px !important; height: 24px !important; }
+
+    .team-panel {
+      display: block !important;
+      background: #1c2230 !important;
+      border: 1px solid rgba(212, 175, 55, 0.18) !important;
+      page-break-inside: avoid;
+      margin: 14px 40px !important;
+      padding: 16px 20px !important;
+    }
+    .team-panel::before {
+      background: linear-gradient(90deg, transparent, #d4af37, transparent) !important;
+    }
+    .team-panel-title { color: #f1f5f9 !important; font-size: 13px !important; }
+    .team-panel-title span { color: #cbd5e1 !important; }
+    .team-panel-section-title { color: #d4af37 !important; font-size: 10px !important; }
+    .team-panel-list { grid-template-columns: repeat(3, 1fr) !important; gap: 4px !important; }
+    .team-member {
+      background: rgba(255,255,255,0.04) !important;
+      padding: 6px 8px !important;
+    }
+    .team-member .member-name { color: #f1f5f9 !important; font-size: 11px !important; }
+    .team-member .member-role { color: #cbd5e1 !important; font-size: 9px !important; }
+    .team-member .mini-avatar {
+      background: rgba(212, 175, 55, 0.18) !important;
+      color: #d4af37 !important;
+      border-color: rgba(212, 175, 55, 0.4) !important;
+    }
+    .team-panel-section.highlighted {
+      background: rgba(212, 175, 55, 0.12) !important;
+      border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    }
+    .team-member .member-tag {
+      background: #16a34a !important;
+      color: #052e16 !important;
+      box-shadow: none !important;
+      animation: none !important;
+    }
+
+    .footer {
+      margin: 0 40px !important;
+      padding: 14px 0 24px !important;
+      border-top: 1px solid rgba(212, 175, 55, 0.25) !important;
+      color: #cbd5e1 !important;
+      font-size: 10px !important;
+    }
+
+    /* ===== Páginas dedicadas de atribuições ===== */
+    .print-atribuicoes {
+      page-break-before: always;
+      padding: 40px;
+      background: linear-gradient(180deg, #0d1117 0%, #1c2230 100%);
+      min-height: 100vh;
+    }
+    .print-atribuicoes h2 {
+      font-size: 22px;
+      background: linear-gradient(135deg, #fff, #d4af37);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+    .print-atribuicoes-sub {
+      color: #cbd5e1;
+      font-size: 11px;
+      margin-bottom: 22px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .print-atrib-bloco {
+      page-break-inside: avoid;
+      background: #1c2230;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .print-atrib-bloco::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 20px; right: 20px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    }
+    .print-atrib-bloco-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    .print-atrib-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #f4d574, #d4af37);
+      color: #0d1117;
+    }
+    .print-atrib-avatar svg { width: 22px; height: 22px; }
+    .print-atrib-bloco-info { flex: 1; }
+    .print-atrib-nome { font-size: 14px; font-weight: 600; color: #f1f5f9; }
+    .print-atrib-cargo { font-size: 11px; color: #cbd5e1; margin-top: 2px; }
+    .print-atrib-categoria { margin-bottom: 10px; }
+    .print-atrib-categoria:last-child { margin-bottom: 0; }
+    .print-atrib-cat-titulo {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #d4af37;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .print-atrib-cat-titulo::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #d4af37;
+    }
+    .print-atrib-itens {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px 12px;
+    }
+    .print-atrib-item {
+      display: flex;
+      gap: 6px;
+      padding: 2px 0;
+      font-size: 10.5px;
+      color: #e2e8f0;
+      line-height: 1.4;
+    }
+    .print-atrib-item::before {
+      content: '◆';
+      color: #d4af37;
+      flex-shrink: 0;
+      font-size: 7px;
+      margin-top: 4px;
+    }
+  }
+
+  /* Esconde a seção dedicada de impressão na tela */
+  .print-atribuicoes { display: none; }
+  @media print { .print-atribuicoes { display: block; } }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="brand">
-    <div class="brand-mark">PR</div>
-    <span class="brand-text">Pleito Operacional · Logística</span>
-  </div>
-  <div class="meta">
-    <span>Período <strong>Jan–Mar 2026</strong></span>
-    <span>Rotas <strong>9</strong></span>
-    <span>Cargas <strong>154</strong></span>
-  </div>
-</header>
+<div class="container">
 
-<!-- ============ HERO ============ -->
-<section class="hero">
-  <div>
-    <div class="eyebrow">Análise para Diretoria · RH & Operações</div>
-    <h1 class="hero-title">Um ajudante por rota,<br><em>um pleito</em> sustentado por dados.</h1>
-    <p class="hero-sub">
-      Análise rota a rota mostrando o custo real de cada uma — com motorista, caminhão e o ajudante proposto — em duas óticas: <em>dedicação integral</em> e <em>rateio proporcional</em>.
-    </p>
-  </div>
-  <div class="hero-stat">
-    <div class="hero-stat-label">Faturamento mensal · 9 rotas</div>
-    <div class="hero-stat-value"><span class="currency">R$</span>1,39<span class="suffix">M</span></div>
-    <div class="hero-stat-foot">
-      <span>894 pedidos/mês</span>
-      <span>51 cargas/mês</span>
+  <!-- Cabeçalho -->
+  <div class="header">
+    <div class="header-left">
+      <h1>Estrutura Organizacional — Logística</h1>
+      <div class="subtitle" id="reportDate"></div>
     </div>
-  </div>
-</section>
-
-<!-- ============ KPIs ============ -->
-<section>
-  <div class="section-head">
-    <div class="section-num">01 / NÚMEROS</div>
-    <div>
-      <div class="section-title">A operação <em>em escala</em>.</div>
-      <p class="section-kicker">
-        Agregado das 9 rotas no período de janeiro a março de 2026 — três meses, 13 semanas, 22 dias úteis por mês.
-      </p>
+    <div class="header-right">
+      <button class="btn" onclick="toggleFullscreen()" id="btnFullscreen">⛶ Modo apresentação</button>
+      <button class="btn" onclick="exportarExcel()">Exportar Excel</button>
+      <button class="btn btn-primary" onclick="baixarPDF()" id="btnPdf">📥 Baixar PDF</button>
     </div>
   </div>
 
+  <!-- KPIs -->
   <div class="kpi-grid">
-    <div class="kpi"><div class="kpi-label">Cargas no período</div><div class="kpi-value">154</div><div class="kpi-foot"><span>3 meses</span><span class="kpi-trend">51,3/mês</span></div></div>
-    <div class="kpi"><div class="kpi-label">Pedidos entregues</div><div class="kpi-value">2.682</div><div class="kpi-foot"><span>17,4 ped/carga</span><span class="kpi-trend">894/mês</span></div></div>
-    <div class="kpi"><div class="kpi-label">Faturamento total</div><div class="kpi-value">R$ 4,18<span class="unit">M</span></div><div class="kpi-foot"><span>3 meses</span><span class="kpi-trend">R$ 1,39M/mês</span></div></div>
-    <div class="kpi"><div class="kpi-label">Ticket médio / carga</div><div class="kpi-value">R$ 27<span class="unit">.135</span></div><div class="kpi-foot"><span>Média ponderada</span><span class="kpi-trend">9 rotas</span></div></div>
-  </div>
-</section>
-
-<!-- ============ ANÁLISE ROTA A ROTA ============ -->
-<section>
-  <div class="section-head">
-    <div class="section-num">02 / ROTA A ROTA</div>
-    <div>
-      <div class="section-title">O custo de cada <em>rota</em>, em duas óticas.</div>
-      <p class="section-kicker">
-        Para cada rota mostramos quantas vezes ela roda por mês e por semana, e o custo mensal sob duas perspectivas. <strong>Integral</strong>: 1 motorista + 1 ajudante dedicados exclusivamente à rota. <strong>Proporcional</strong>: custo rateado pelo número de cargas que a rota efetivamente executou.
-      </p>
+    <div class="kpi">
+      <div class="kpi-label">Total de colaboradores <button class="kpi-info" onclick="abrirInfoKpi('total')" aria-label="Sobre este indicador">ⓘ</button></div>
+      <div class="kpi-value" id="kpiTotal">—</div>
+      <div class="kpi-sub">Quadro ativo</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Lideranças <button class="kpi-info" onclick="abrirInfoKpi('lider')" aria-label="Sobre este indicador">ⓘ</button></div>
+      <div class="kpi-value" id="kpiLideres">—</div>
+      <div class="kpi-sub">Sup., líderes e gestão</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Turnos operacionais <button class="kpi-info" onclick="abrirInfoKpi('turnos')" aria-label="Sobre este indicador">ⓘ</button></div>
+      <div class="kpi-value">3</div>
+      <div class="kpi-sub">Manhã · Tarde · Noite</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Frota de motoristas <button class="kpi-info" onclick="abrirInfoKpi('motoristas')" aria-label="Sobre este indicador">ⓘ</button></div>
+      <div class="kpi-value" id="kpiMotoristas">—</div>
+      <div class="kpi-sub">Entregadores ativos</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Span médio <button class="kpi-info" onclick="abrirInfoKpi('span')" aria-label="Sobre este indicador">ⓘ</button></div>
+      <div class="kpi-value" id="kpiSpan">—</div>
+      <div class="kpi-sub">Subordinados por liderança</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Maior equipe <button class="kpi-info" onclick="abrirInfoKpi('spanMax')" aria-label="Sobre este indicador">ⓘ</button></div>
+      <div class="kpi-value" id="kpiSpanMax">—</div>
+      <div class="kpi-sub" id="kpiSpanMaxNome">—</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Menor equipe <button class="kpi-info" onclick="abrirInfoKpi('spanMin')" aria-label="Sobre este indicador">ⓘ</button></div>
+      <div class="kpi-value" id="kpiSpanMin">—</div>
+      <div class="kpi-sub" id="kpiSpanMinNome">—</div>
     </div>
   </div>
 
-  <!-- Premissas globais editáveis -->
-  <div class="premissas">
-    <div class="premissas-head">
-      <div class="premissas-title">Premissas (edite para recalcular)</div>
-      <div class="premissas-sub">Valores aplicados a todas as rotas</div>
+  <!-- Árvore -->
+  <div class="tree" id="tree"></div>
+
+  <!-- Rodapé -->
+  <div class="footer">
+    <div>Logística · Estrutura vigente em <span id="footerDate"></span></div>
+    <div class="footer-center">
+      <button class="footer-btn" onclick="abrirHistorico()">🕐 Ver histórico de alterações</button>
     </div>
-    <div class="prem-grid">
-      <div class="prem-field">
-        <label>Motorista / mês</label>
-        <input type="number" id="motMes" value="8242.94" step="0.01" inputmode="decimal">
-        <span class="hint">Base + encargos + benef. + H.E.</span>
-      </div>
-      <div class="prem-field">
-        <label>Ajudante / mês</label>
-        <input type="number" id="ajMes" value="4921.97" step="0.01" inputmode="decimal">
-        <span class="hint">Auxiliar de Logística</span>
-      </div>
-      <div class="prem-field">
-        <label>Custo por km</label>
-        <input type="number" id="custoKm" value="3.31" step="0.01" inputmode="decimal">
-        <span class="hint">R$ por km rodado</span>
-      </div>
-      <div class="prem-field">
-        <label>KM médio / carga</label>
-        <input type="number" id="kmCarga" value="350" step="10" inputmode="numeric">
-        <span class="hint">Preencher real depois</span>
-      </div>
-      <div class="prem-field">
-        <label>Dias úteis / mês</label>
-        <input type="number" id="diasUteis" value="22" step="1" inputmode="numeric">
-        <span class="hint">Base para rateio</span>
-      </div>
-    </div>
+    <div class="footer-brand">Confidencial — uso interno</div>
   </div>
-
-  <!-- Grid de rotas -->
-  <div class="rotas-grid" id="rotasGrid"></div>
-
-  <!-- Consolidado -->
-  <div class="consol">
-    <div class="consol-eyebrow">Consolidado · 9 rotas</div>
-    <div class="consol-title">Soma dos custos mensais nas duas óticas.</div>
-
-    <div class="consol-grid">
-      <div class="consol-col">
-        <div class="consol-col-head">Ótica Integral<span class="consol-col-tag">9 duplas</span></div>
-        <div class="consol-line"><span class="lbl">Caminhão</span><span class="val mono" id="totIntCam">—</span></div>
-        <div class="consol-line"><span class="lbl">9 motoristas</span><span class="val mono" id="totIntMot">—</span></div>
-        <div class="consol-line"><span class="lbl">9 ajudantes</span><span class="val mono" id="totIntAj">—</span></div>
-        <div class="consol-line total"><span class="lbl">Total COM ajudante</span><span class="val mono" id="totIntCom">—</span></div>
-      </div>
-      <div class="consol-col">
-        <div class="consol-col-head">Ótica Proporcional<span class="consol-col-tag">Rateado</span></div>
-        <div class="consol-line"><span class="lbl">Caminhão</span><span class="val mono" id="totPropCam">—</span></div>
-        <div class="consol-line"><span class="lbl">Motoristas (rateio)</span><span class="val mono" id="totPropMot">—</span></div>
-        <div class="consol-line"><span class="lbl">Ajudantes (rateio)</span><span class="val mono" id="totPropAj">—</span></div>
-        <div class="consol-line total"><span class="lbl">Total COM ajudante</span><span class="val mono" id="totPropCom">—</span></div>
-      </div>
-    </div>
-
-    <div class="consol-delta">
-      <div>
-        <div class="consol-delta-lbl">Custo adicional do ajudante (proporcional)</div>
-        <div class="consol-delta-sub" style="text-align:left;margin-top:4px;">Representa <span id="pctFat">—</span> do faturamento mensal das 9 rotas (R$ 1,39 M)</div>
-      </div>
-      <div style="text-align:right;">
-        <div class="consol-delta-val" id="deltaProp">—</div>
-        <div class="consol-delta-sub">Integral: <span id="deltaInt">—</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ JUSTIFICATIVA ============ -->
-<section>
-  <div class="section-head">
-    <div class="section-num">03 / JUSTIFICATIVA</div>
-    <div>
-      <div class="section-title">Por que <em>agora</em>.</div>
-      <p class="section-kicker">Três argumentos que sustentam o pleito frente à diretoria.</p>
-    </div>
-  </div>
-
-  <div class="argument-grid">
-    <div class="argument">
-      <div class="argument-num">01</div>
-      <div class="argument-title">Volume justifica o investimento</div>
-      <p class="argument-body">
-        17,4 pedidos por carga em média, chegando a 21,8 em rotas como INTE SUL. Descarga sem ajudante é gargalo direto — o motorista vira operador, atendente e conferente ao mesmo tempo. Tempo perdido em doca é entrega que não acontece no prazo.
-      </p>
-    </div>
-    <div class="argument">
-      <div class="argument-num">02</div>
-      <div class="argument-title">Custo proporcionalmente baixo</div>
-      <p class="argument-body">
-        Mesmo na ótica integral (1 ajudante exclusivo por rota), o investimento total representa menos de 4% do faturamento mensal. Na ótica proporcional, o impacto cai para menos de 1%.
-      </p>
-    </div>
-    <div class="argument">
-      <div class="argument-num">03</div>
-      <div class="argument-title">Riscos não contabilizados</div>
-      <p class="argument-body">
-        Avarias por manuseio inadequado, afastamentos por esforço repetitivo, reentregas por atraso, perda de janela em centros de distribuição com hora marcada. O custo da ausência de ajudante não aparece na folha — aparece em devoluções, retrabalho e turnover de motorista.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ============ FECHAMENTO ============ -->
-<div class="closing">
-  <div class="closing-eyebrow">Recomendação</div>
-  <h2 class="closing-title">Aprovar a contratação de <em>1 ajudante fixo</em> por motorista nas rotas analisadas.</h2>
-  <p class="closing-sub">
-    O custo do ajudante se paga em redução de avarias, devoluções, afastamentos e maior pontualidade nas janelas de entrega — riscos hoje não contabilizados na operação.
-  </p>
 </div>
 
-<footer>
-  <span>Fonte: Relatório de Cargas Jan–Mar/2026 · Dashboard Logístico · Aba CustoFuncionário</span>
-  <span>Confidencial · Uso interno</span>
-</footer>
+<!-- Página dedicada para impressão (PDF) — mostra todas as atribuições -->
+<div class="print-atribuicoes" id="printAtribuicoes"></div>
+
+<!-- Dica do modo apresentação -->
+<div class="modo-apresentacao-hint">
+  Modo apresentação · Pressione <kbd>Esc</kbd> ou <kbd>F</kbd> para sair
+</div>
+
+<!-- Modal de Info KPI -->
+<div class="modal-overlay" id="modalInfoKpi" onclick="if(event.target===this)fecharInfoKpi()">
+  <div class="modal-content" style="max-width: 540px;">
+    <div class="modal-header">
+      <div>
+        <h2 id="infoKpiTitulo">—</h2>
+        <div class="modal-sub" id="infoKpiSub">—</div>
+      </div>
+      <button class="modal-close" onclick="fecharInfoKpi()" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-body" id="infoKpiBody"></div>
+    <div class="modal-footer">
+      <div class="modal-footer-info"></div>
+      <div class="modal-footer-actions">
+        <button class="btn btn-primary" onclick="fecharInfoKpi()">Entendi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Atribuições -->
+<div class="modal-overlay" id="modalAtribuicoes" onclick="if(event.target===this)fecharModal()">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div>
+        <h2 id="modalTitulo">Atribuições e Atividades</h2>
+        <div class="modal-sub" id="modalSubtitulo">Setor de Motoristas</div>
+      </div>
+      <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="atribContent"></div>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-footer-info"></div>
+      <div class="modal-footer-actions">
+        <button class="btn btn-primary" onclick="fecharModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Histórico -->
+<div class="modal-overlay" id="modalHistorico" onclick="if(event.target===this)fecharHistorico()">
+  <div class="modal-content" style="max-width: 680px;">
+    <div class="modal-header">
+      <div>
+        <h2>Histórico de Alterações</h2>
+        <div class="modal-sub">Movimentações recentes na estrutura</div>
+      </div>
+      <button class="modal-close" onclick="fecharHistorico()" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-body" id="historicoBody"></div>
+    <div class="modal-footer">
+      <div class="modal-footer-info"></div>
+      <div class="modal-footer-actions">
+        <button class="btn btn-primary" onclick="fecharHistorico()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-const ROTAS = [{"rota": "APARECI|DOCA 10", "cargas_total": 18, "cargas_mes": 6.0, "cargas_semana": 1.38, "pedidos_total": 334, "pedidos_mes": 111.3, "pedidos_carga": 18.6, "fat_total": 458743.74, "fat_mes": 152914.58, "ticket_carga": 25485.76}, {"rota": "APARE|DOCA 10.A", "cargas_total": 16, "cargas_mes": 5.33, "cargas_semana": 1.23, "pedidos_total": 261, "pedidos_mes": 87.0, "pedidos_carga": 16.3, "fat_total": 342727.24, "fat_mes": 114242.41, "ticket_carga": 21420.45}, {"rota": "INTE SUL|DOCA 8", "cargas_total": 5, "cargas_mes": 1.67, "cargas_semana": 0.38, "pedidos_total": 109, "pedidos_mes": 36.3, "pedidos_carga": 21.8, "fat_total": 180530.3, "fat_mes": 60176.77, "ticket_carga": 36106.06}, {"rota": "INTE S|DOC 17.A", "cargas_total": 1, "cargas_mes": 0.33, "cargas_semana": 0.08, "pedidos_total": 18, "pedidos_mes": 6.0, "pedidos_carga": 18.0, "fat_total": 33695.21, "fat_mes": 11231.74, "ticket_carga": 33695.21}, {"rota": "INTE S|DOCA 8.A", "cargas_total": 4, "cargas_mes": 1.33, "cargas_semana": 0.31, "pedidos_total": 66, "pedidos_mes": 22.0, "pedidos_carga": 16.5, "fat_total": 111403.54, "fat_mes": 37134.51, "ticket_carga": 27850.89}, {"rota": "LITORAL|DOCA 2", "cargas_total": 42, "cargas_mes": 14.0, "cargas_semana": 3.23, "pedidos_total": 871, "pedidos_mes": 290.3, "pedidos_carga": 20.7, "fat_total": 1431188.81, "fat_mes": 477062.94, "ticket_carga": 34075.92}, {"rota": "MOGI|DOCA 11", "cargas_total": 48, "cargas_mes": 16.0, "cargas_semana": 3.69, "pedidos_total": 744, "pedidos_mes": 248.0, "pedidos_carga": 15.5, "fat_total": 1194551.42, "fat_mes": 398183.81, "ticket_carga": 24886.49}, {"rota": "SORO|DOCA 1", "cargas_total": 10, "cargas_mes": 3.33, "cargas_semana": 0.77, "pedidos_total": 153, "pedidos_mes": 51.0, "pedidos_carga": 15.3, "fat_total": 218196.87, "fat_mes": 72732.29, "ticket_carga": 21819.69}, {"rota": "SORO|DOCA 1.C", "cargas_total": 10, "cargas_mes": 3.33, "cargas_semana": 0.77, "pedidos_total": 126, "pedidos_mes": 42.0, "pedidos_carga": 12.6, "fat_total": 207321.44, "fat_mes": 69107.15, "ticket_carga": 20732.14}];
-
-const fmtBRL = (v) => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
-const fmtBRL2 = (v) => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
-const fmtNum = (v) => v.toLocaleString('pt-BR');
-const fmtPct = (v) => (v*100).toFixed(2).replace('.', ',') + '%';
-
-// Premissas
-const inputs = {
-  motMes: document.getElementById('motMes'),
-  ajMes: document.getElementById('ajMes'),
-  custoKm: document.getElementById('custoKm'),
-  kmCarga: document.getElementById('kmCarga'),
-  diasUteis: document.getElementById('diasUteis'),
+// ============================================================
+// DADOS - estrutura organizacional completa
+// ============================================================
+const ESTRUTURA = {
+  diretor: {
+    nome: "Eduardo Martins",
+    cargo: "Diretor",
+    nivel: "diretor"
+  },
+  gerente: {
+    nome: "Gabriel Barbosa M. Silva",
+    cargo: "Gerente Logístico",
+    nivel: "gerente",
+    atribuicoesKey: "gabriel"
+  },
+  supervisores: [
+    {
+      id: "a-sup1",
+      nome: "Carlos Henrique Bailhão",
+      cargo: "Supervisor — Carregamento (Turno A)",
+      nivel: "supervisor",
+      turno: "A",
+      atribuicoes: [
+        { key: "carlosHenrique", label: "📋 Minhas atribuições" },
+        { key: "supervisoresPadrao", label: "👔 Padrão da supervisão" }
+      ],
+      equipe: {
+        "Liderança e Operação": [
+          { nome: "Lucas Ferreira", cargo: "Líder de Carregamento", nivel: "lider", atribuicoesKey: "lideresPadrao" },
+          { nome: "Eduardo Toledo Santana", cargo: "Assistente Logística Faturamento", nivel: "assistente" }
+        ],
+        "Operacional": [
+          { nome: "Guilherme S. Nascimento", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Jefferson Alves S. Miranda", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Carlos Eduardo Pedrette", cargo: "Aux. Logística", nivel: "aux" }
+        ],
+        "Devolução": [
+          { nome: "Laudiceia de Souza", cargo: "Processo de Devolução", nivel: "assistente", atribuicoesKey: "laudiceia" }
+        ]
+      }
+    },
+    {
+      id: "a-sup2",
+      nome: "Vanessa Ribeiro",
+      cargo: "Supervisor — Armazenagem (Turno A)",
+      nivel: "supervisor",
+      turno: "A",
+      atribuicoes: [
+        { key: "vanessaRibeiro", label: "📋 Minhas atribuições" },
+        { key: "supervisoresPadrao", label: "👔 Padrão da supervisão" },
+        { key: "conferentesVanessa", label: "📦 Atribuições conferentes" },
+        { key: "auxiliaresVanessa", label: "🗂️ Atribuições auxiliares" },
+        { key: "empilhadeira", label: "🏗️ Op. de empilhadeira" }
+      ],
+      equipe: {
+        "Liderança": [
+          { nome: "Rosicleude Silva", cargo: "Líder de Estoque", nivel: "lider", atribuicoesKey: "lideresPadrao" }
+        ],
+        "Conferência (Recebimento)": [
+          { nome: "Vinicius dos Santos", cargo: "Conf. Recebimento Jr.", nivel: "conferente" },
+          { nome: "Geneilda da Silva", cargo: "Conf. Recebimento Jr.", nivel: "conferente", atribuicoesKey: "geneilda" },
+          { nome: "Jose Luiz Jr.", cargo: "Conf. Recebimento Jr.", nivel: "conferente" },
+          { nome: "Leila Cristina Souza", cargo: "Conf. Recebimento Jr.", nivel: "conferente" },
+          { nome: "Marta Leandro", cargo: "Conf. Recebimento Jr.", nivel: "conferente" },
+          { nome: "Valcides da Silva Novaes", cargo: "Op. de Empilhadeira", nivel: "conferente" }
+        ],
+        "Auxiliares": [
+          { nome: "Devanir Barbosa Souza", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Cleiton Henrique Lopes", cargo: "Aux. Logística · Apoio à Liderança", nivel: "aux", atribuicoesKey: "cleitonHenrique" },
+          { nome: "Paulo Eduardo da Silva", cargo: "Aux. Estoque", nivel: "aux" },
+          { nome: "Luis Diego Costa Mendonça", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Marcelo Lopes", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Gustavo Gomes Araujo", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Valdir Gomes da Silva", cargo: "Aux. Estoque", nivel: "aux" },
+          { nome: "Jean", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "William Vieira Miranda", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Iury", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Iury Carvalho", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "VAGA EM ABERTO", cargo: "Aux. Logística — recrutamento ativo", nivel: "aux", vaga: true },
+          { nome: "Matheus Souza", cargo: "Aux. Endereçamento", nivel: "aux" },
+          { nome: "Adilson", cargo: "Aux. Logística", nivel: "aux" }
+        ],
+        "Inventário": [
+          { nome: "Renato Alves", cargo: "Aux. Inventário", nivel: "aux", destaque: true },
+          { nome: "Douglas Faccio", cargo: "Aux. Inventário", nivel: "aux", destaque: true }
+        ]
+      }
+    },
+    {
+      id: "b-sup",
+      nome: "Claudio Barcelos Jr",
+      cargo: "Supervisor (Turno B)",
+      nivel: "supervisor",
+      turno: "B",
+      atribuicoes: [
+        { key: "claudioBarcelos", label: "📋 Minhas atribuições" },
+        { key: "supervisoresPadrao", label: "👔 Padrão da supervisão" },
+        { key: "conferentesTurnoBC", label: "📋 Atribuições conferentes" },
+        { key: "auxiliaresTurnoBC", label: "📦 Atribuições auxiliares" }
+      ],
+      equipe: {
+        "Liderança": [
+          { nome: "Mauricio Novaes Nascimento", cargo: "Líder", nivel: "lider", atribuicoesKey: "lideresPadrao" }
+        ],
+        "Conferência": [
+          { nome: "Lucas", cargo: "Conf. Expedição Jr.", nivel: "conferente" },
+          { nome: "Jessica de Souza", cargo: "Conf. Expedição Jr.", nivel: "conferente" },
+          { nome: "Marcos Fernande", cargo: "Conf. Expedição Jr.", nivel: "conferente" },
+          { nome: "Maria Debora Alves", cargo: "Conf. Expedição Jr.", nivel: "conferente", atribuicoesKey: "mariaDebora" },
+          { nome: "Vanessa Gomes", cargo: "Conf. Expedição Jr.", nivel: "conferente" }
+        ],
+        "Auxiliares": [
+          { nome: "Beatriz dos Santos", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Lourival Ribeiro Freire", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Fabiane dos Santos Cruz", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Gabriel Figueredo", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Luciano Pereira", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Allan Soares", cargo: "Aux. Logística", nivel: "aux" }
+        ]
+      }
+    },
+    {
+      id: "c-sup1",
+      nome: "Jefferson Virissimo & Edgar Claro",
+      cargo: "Supervisão (Turno C)",
+      nivel: "supervisor",
+      turno: "C",
+      atribuicoes: [
+        { key: "jeffersonVirissimo", label: "📋 Minhas atribuições" },
+        { key: "supervisoresPadrao", label: "👔 Padrão da supervisão" },
+        { key: "conferentesTurnoBC", label: "📋 Atribuições conferentes" },
+        { key: "auxiliaresTurnoBC", label: "📦 Atribuições auxiliares" },
+        { key: "empilhadeira", label: "🏗️ Op. de empilhadeira" }
+      ],
+      equipe: {
+        "Supervisão": [
+          { nome: "Jefferson Virissimo de Lima", cargo: "Supervisor", nivel: "supervisor" },
+          { nome: "Edgar Claro", cargo: "Supervisor", nivel: "supervisor" }
+        ],
+        "Conferência": [
+          { nome: "Cassio Luis", cargo: "Conf. Expedição Jr.", nivel: "conferente" },
+          { nome: "Michel Silva", cargo: "Conf. Expedição Jr.", nivel: "conferente" },
+          { nome: "Danilo Heleno", cargo: "Conf. Expedição Jr.", nivel: "conferente" },
+          { nome: "Osvaldo Junior", cargo: "Conf. Expedição Jr.", nivel: "conferente" },
+          { nome: "Everaldo da Silva", cargo: "Conf. Expedição Jr.", nivel: "conferente" },
+          { nome: "Laerte Antonio", cargo: "Conf. Expedição Jr.", nivel: "conferente" },
+          { nome: "Maicon Rosa da Silva", cargo: "Conf. Expedição Jr.", nivel: "conferente" }
+        ],
+        "Auxiliares": [
+          { nome: "Matheus Coelho", cargo: "Aux. Logística - G1", nivel: "aux" },
+          { nome: "Carlos Alberto Arruda", cargo: "Op. de Empilhadeira", nivel: "aux" },
+          { nome: "Leonidas", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Josemar", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Wesley Fioravan", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "John Mike Rodrigues da Silva", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Silvio Gomes", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Peterson Martins", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Rodrigo Sousa Santos", cargo: "Aux. Logística", nivel: "aux" }
+        ]
+      }
+    },
+    {
+      id: "c-sup-carr",
+      nome: "Cleiton Aparecido",
+      cargo: "Supervisor de Carregamento (Turno C)",
+      nivel: "supervisor",
+      turno: "C",
+      atribuicoes: [
+        { key: "supervisoresPadrao", label: "📋 Atribuições padrão" },
+        { key: "cleiton", label: "👔 Minhas atribuições" },
+        { key: "equipeCleiton", label: "📦 Atribuições da equipe" }
+      ],
+      equipe: {
+        "Auxiliares": [
+          { nome: "Rubenildo Silva Cerqueira", cargo: "Aux. Logística", nivel: "aux" },
+          { nome: "Vinicius Inacio da Silva", cargo: "Aux. Logística - Pesado", nivel: "aux" },
+          { nome: "Josue Vitor Manzi da Silva", cargo: "Aux. Logística - Pesado", nivel: "aux" },
+          { nome: "Junior Luiz de Oliveira", cargo: "Aux. Logística - Pesado", nivel: "aux" },
+          { nome: "Mauricio", cargo: "Aux. Logística - Pesado", nivel: "aux" }
+        ]
+      }
+    },
+    {
+      id: "sup-mot",
+      nome: "Rogério de Ana Machado",
+      cargo: "Supervisor de Motoristas",
+      nivel: "supervisor",
+      turno: "M",
+      atribuicoes: [
+        { key: "supervisoresPadrao", label: "📋 Atribuições padrão" },
+        { key: "rogerio", label: "👔 Minhas atribuições" },
+        { key: "motoristas", label: "🚚 Atribuições da equipe" }
+      ],
+      equipe: {
+        "Frota": [
+          { nome: "Eduardo Araujo", cargo: "M. Entregador Pleno", nivel: "motorista" },
+          { nome: "George Barbosa", cargo: "M. Entregador Master", nivel: "motorista" },
+          { nome: "Jose Aparecido", cargo: "M. Entregador Master", nivel: "motorista" },
+          { nome: "Reginaldo Firmino", cargo: "M. Entregador Master", nivel: "motorista" },
+          { nome: "Alessandro de Ana Machado", cargo: "M. Entregador Master", nivel: "motorista" },
+          { nome: "Guilherme Augusto Firmino", cargo: "M. Entregador Master", nivel: "motorista" },
+          { nome: "Mayllon dos Santos Oliveira", cargo: "M. Entregador Master", nivel: "motorista" },
+          { nome: "Isaias Justino Bulhoes", cargo: "M. Entregador Master", nivel: "motorista" },
+          { nome: "Jefferson Luis Torres", cargo: "M. Entregador Master", nivel: "motorista" },
+          { nome: "Marcelo Severiano Ramos", cargo: "M. Entregador Master (afastado)", nivel: "motorista" },
+          { nome: "Jose Luis Mantovani", cargo: "M. Entregador Master", nivel: "motorista" },
+          { nome: "Alexandre Lopes", cargo: "M. Entregador Master", nivel: "motorista", tag: "NOVO" }
+        ]
+      }
+    }
+  ],
+  // Área que reporta direto à diretoria (E-commerce → Eduardo via Baby)
+  areasDir: [
+    {
+      id: "ecom",
+      nome: "Baby",
+      cargo: "Diretora — E-commerce",
+      nivel: "diretor",
+      reportaA: "Eduardo Martins",
+      equipe: {
+        "E-commerce": [
+          { nome: "Gabriel Ribeiro Marins", cargo: "Setor E-commerce", nivel: "assistente" }
+        ]
+      }
+    }
+  ],
+  // Áreas independentes/sutis que reportam à gerência (sem hierarquia de equipe)
+  areasIndep: [
+    {
+      nome: "Erivancleide da Silva",
+      cargo: "Setor de Retira",
+      nivel: "analista",
+      atribuicoesKey: "erivancleide"
+    },
+    {
+      nome: "Lucas Souza",
+      cargo: "Analista de Faturamento",
+      nivel: "analista",
+      atribuicoesKey: "lucasSouza"
+    }
+  ],
+  // Áreas no mesmo nível do Gerente Logístico (reportam ao Diretor)
+  areasGerencia: [
+    {
+      id: "facilities",
+      nome: "Robson",
+      cargo: "Facilities",
+      nivel: "gerente",
+      reportaA: "Eduardo Martins",
+      equipe: {
+        "Equipe": [
+          { nome: "Tiago Duarte", cargo: "Aux. de Serviços Gerais", nivel: "servicos" }
+        ]
+      }
+    }
+  ]
 };
 
-// Ordenar por faturamento
-ROTAS.sort((a,b) => b.fat_mes - a.fat_mes);
+// ============================================================
+// HISTÓRICO DE ALTERAÇÕES
+// ============================================================
+const HISTORICO = [
+  {
+    data: "25/05/2026",
+    tipo: "Desligamento",
+    descricao: "Thalita pediu demissão · Vaga em aberto na equipe da Vanessa Ribeiro (Auxiliar de Logística)"
+  },
+  {
+    data: "25/05/2026",
+    tipo: "Movimentação",
+    descricao: "Maicon Rosa da Silva adicionado à conferência do Turno C (equipe Jefferson & Edgar)"
+  },
+  {
+    data: "25/05/2026",
+    tipo: "Movimentação",
+    descricao: "Mauricio (Aux. Pesado) movido da equipe Jefferson para a equipe Cleiton Aparecido"
+  },
+  {
+    data: "25/05/2026",
+    tipo: "Movimentação",
+    descricao: "Junior Luiz de Oliveira movido da equipe Jefferson para a equipe Cleiton Aparecido"
+  },
+  {
+    data: "25/05/2026",
+    tipo: "Desligamento",
+    descricao: "Nicolas Moura desligado da equipe do Turno C"
+  },
+  {
+    data: "25/05/2026",
+    tipo: "Reestruturação",
+    descricao: "Jefferson e Edgar Claro unificados em co-supervisão do Turno C (antes apareciam como cards separados)"
+  },
+  {
+    data: "25/05/2026",
+    tipo: "Promoção",
+    descricao: "Cleiton Henrique Lopes reconhecido formalmente como Apoio à Liderança da Vanessa (setores 2 e 3)"
+  }
+];
 
-// FAT total para o card de consolidado
-const FAT_MES_TOTAL = ROTAS.reduce((a,r) => a + r.fat_mes, 0);
+// ============================================================
+// ATRIBUIÇÕES POR ÁREA
+// ============================================================
+const ATRIBUICOES = {
+  gabriel: {
+    titulo: "Atribuições — Gabriel Barbosa M. Silva",
+    subtitulo: "Gerência de Logística",
+    categorias: [
+      {
+        nome: "Gestão Estratégica",
+        icone: "🎯",
+        itens: [
+          "Gestão geral do setor de logística",
+          "Definição de metas, indicadores e plano de ação",
+          "Alinhamento estratégico com a diretoria",
+          "Desenvolvimento e formação dos supervisores",
+          "Tomada de decisão em casos críticos da operação"
+        ]
+      },
+      {
+        nome: "Operação e Controle",
+        icone: "📊",
+        itens: [
+          "Acompanhamento da produtividade dos turnos",
+          "Análise de custos logísticos e propostas de redução",
+          "Garantia do cumprimento de prazos de entrega",
+          "Validação de processos e procedimentos operacionais",
+          "Aprovação de contratações, escalas e movimentações"
+        ]
+      },
+      {
+        nome: "Integração e Relacionamento",
+        icone: "🤝",
+        itens: [
+          "Integração entre logística, comercial, e-commerce e facilities",
+          "Negociação com fornecedores e prestadores de serviço",
+          "Representação da área em reuniões corporativas"
+        ]
+      }
+    ]
+  },
+  lucasSouza: {
+    titulo: "Atribuições — Lucas Souza",
+    subtitulo: "Analista de Faturamento",
+    categorias: [
+      {
+        nome: "Faturamento",
+        icone: "🧾",
+        itens: [
+          "Análise e processamento do faturamento",
+          "Conferência de pedidos a faturar",
+          "Acompanhamento das notas emitidas"
+        ]
+      },
+      {
+        nome: "Apoio Operacional",
+        icone: "🤝",
+        itens: [
+          "Auxiliar nos setores que precisarem (separação, conferência, etc.)",
+          "Suporte às equipes em demandas de alto volume"
+        ]
+      }
+    ]
+  },
+  erivancleide: {
+    titulo: "Atribuições — Erivancleide da Silva",
+    subtitulo: "Setor de Retira",
+    categorias: [
+      {
+        nome: "Preparação e Emissão",
+        icone: "🧾",
+        itens: [
+          "Preparar pedido no sistema se necessário",
+          "Impressão do pedido"
+        ]
+      },
+      {
+        nome: "Acompanhamento",
+        icone: "👀",
+        itens: [
+          "Acompanhamento do pedido na separação / checkout"
+        ]
+      },
+      {
+        nome: "Conferência Financeira",
+        icone: "💰",
+        itens: [
+          "Receber e conferir valores (sistema x físico)"
+        ]
+      }
+    ]
+  },
+  lideresPadrao: {
+    titulo: "Atribuições — Líder",
+    subtitulo: "Atribuições padrão da liderança",
+    categorias: [
+      {
+        nome: "Liderança e Coordenação",
+        icone: "⭐",
+        itens: [
+          "Liderar o setor",
+          "Responsável pelo fluxo de trabalho",
+          "Delega os trabalhos e fiscaliza",
+          "Coordena o processo",
+          "Alinhamento da produção"
+        ]
+      }
+    ]
+  },
+  geneilda: {
+    titulo: "Atribuições — Geneilda da Silva",
+    subtitulo: "Conferente Recebimento — Retorno de Motoristas Terceirizados",
+    categorias: [
+      {
+        nome: "Retorno de Motoristas Terceirizados",
+        icone: "🚚",
+        itens: [
+          "Recepção e conferência do retorno dos motoristas terceirizados",
+          "Conferência de pedidos entregues e não entregues",
+          "Conferência de pagamentos relativos às entregas",
+          "Tratativa de divergências entre pedidos faturados e retornados"
+        ]
+      },
+      {
+        nome: "Conferência de Recebimento",
+        icone: "📦",
+        itens: [
+          "Demais atividades padrão de conferência de recebimento",
+          "Tratamento e identificação dos volumes recebidos"
+        ]
+      }
+    ]
+  },
+  mariaDebora: {
+    titulo: "Atribuições — Maria Debora Alves",
+    subtitulo: "Conferente — Retorno de Caminhões Próprios",
+    categorias: [
+      {
+        nome: "Retorno de Caminhões Próprios",
+        icone: "🚛",
+        itens: [
+          "Conferência dos retornos dos caminhões próprios",
+          "Conferência de pedidos entregues",
+          "Conferência de pagamentos recebidos nas entregas",
+          "Identificação e tratativa de pedidos que retornaram sem entrega (sem tempo hábil)"
+        ]
+      },
+      {
+        nome: "Conferência de Expedição",
+        icone: "📋",
+        itens: [
+          "Demais atividades padrão de conferência de expedição",
+          "Reporte de ocorrências para a supervisão"
+        ]
+      }
+    ]
+  },
+  cleitonHenrique: {
+    titulo: "Atribuições — Cleiton Henrique Lopes",
+    subtitulo: "Apoio à Liderança — Armazenagem (Turno A)",
+    categorias: [
+      {
+        nome: "Apoio à Liderança",
+        icone: "🤝",
+        itens: [
+          "Auxiliar a liderança do setor de armazenagem",
+          "Apoio direto à líder Rosicleude Silva nas demandas do turno",
+          "Suporte na coordenação e organização da equipe"
+        ]
+      },
+      {
+        nome: "Monitoramento da Equipe e Processos",
+        icone: "👀",
+        itens: [
+          "Monitoramento da equipe e dos setores 2 e 3",
+          "Acompanhamento dos processos e atividades realizados",
+          "Reporte de ocorrências e demandas à liderança"
+        ]
+      },
+      {
+        nome: "Atividades de Auxiliar",
+        icone: "📦",
+        itens: [
+          "Demais atividades padrão de Auxiliar de Logística"
+        ]
+      }
+    ]
+  },
+  laudiceia: {
+    titulo: "Atribuições — Laudiceia de Souza",
+    subtitulo: "Setor de Devoluções",
+    categorias: [
+      {
+        nome: "Processo de Devolução",
+        icone: "↩️",
+        itens: [
+          "Faz todo o processo de devolução",
+          "Análise do produto devolvido",
+          "Acompanhamento de produto a ser devolvido"
+        ]
+      },
+      {
+        nome: "Validação Fiscal",
+        icone: "📑",
+        itens: [
+          "Verificar se o cliente fez/emitiu a nota ou não",
+          "Dar andamento no sistema na situação do mesmo"
+        ]
+      },
+      {
+        nome: "Organização",
+        icone: "🗂️",
+        itens: [
+          "Organização do setor"
+        ]
+      }
+    ]
+  },
+  vanessaRibeiro: {
+    titulo: "Atribuições — Vanessa Ribeiro",
+    subtitulo: "Supervisora de Armazenagem (Turno A)",
+    categorias: [
+      {
+        nome: "Gestão da Armazenagem",
+        icone: "🏭",
+        itens: [
+          "Coordenação do recebimento, tratamento e armazenagem dos produtos",
+          "Gestão do endereçamento e organização do pulmão",
+          "Acompanhamento do líder de estoque (Rosicleude)",
+          "Acompanhamento do operador de empilhadeira (Valcides)"
+        ]
+      },
+      {
+        nome: "Inventário e Estoque",
+        icone: "📑",
+        itens: [
+          "Coordenação dos processos de inventário (Renato e Douglas)",
+          "Acompanhamento do prazo de vencimento e validade dos produtos",
+          "Análise de controle de desperdícios e avarias"
+        ]
+      },
+      {
+        nome: "Gestão da Equipe",
+        icone: "👥",
+        itens: [
+          "Gestão das equipes de conferência e auxiliares",
+          "Avaliação de produtividade",
+          "Desenvolvimento do líder",
+          "Estabelece comunicação com o controle comercial"
+        ]
+      }
+    ]
+  },
+  carlosHenrique: {
+    titulo: "Atribuições — Carlos Henrique Bailhão",
+    subtitulo: "Supervisor de Carregamento (Turno A)",
+    categorias: [
+      {
+        nome: "Coordenação do Carregamento",
+        icone: "🚛",
+        itens: [
+          "Coordenar a chegada e o carregamento dos veículos no Turno A",
+          "Acompanhar o carregamento e organização das cargas conforme o itinerário",
+          "Liberação de cargas para saída",
+          "Responsável pela finalização do turno"
+        ]
+      },
+      {
+        nome: "Gestão da Equipe",
+        icone: "👥",
+        itens: [
+          "Delegar atividades aos auxiliares de logística do carregamento",
+          "Acompanhar a produtividade da equipe",
+          "Desenvolvimento e orientação do líder de carregamento",
+          "Acompanhamento do processo de devolução (via Laudiceia)"
+        ]
+      },
+      {
+        nome: "Análise e Indicadores",
+        icone: "📊",
+        itens: [
+          "Análise de produtividade e avarias do carregamento",
+          "Comunicação com o controle comercial sobre prazos e prioridades",
+          "Melhorias contínuas no processo de carregamento"
+        ]
+      }
+    ]
+  },
+  claudioBarcelos: {
+    titulo: "Atribuições — Claudio Barcelos Jr",
+    subtitulo: "Supervisor do Turno B",
+    categorias: [
+      {
+        nome: "Gestão do Turno B",
+        icone: "🌅",
+        itens: [
+          "Coordenação geral da operação do Turno B",
+          "Liberação dos pedidos",
+          "Garantia do cumprimento das metas do turno",
+          "Acompanhamento do líder do turno (Mauricio)"
+        ]
+      },
+      {
+        nome: "Gestão da Equipe",
+        icone: "👥",
+        itens: [
+          "Desenvolvimento e orientação do líder",
+          "Avaliação de produtividade dos conferentes e auxiliares",
+          "Definição de escalas e atividades"
+        ]
+      },
+      {
+        nome: "Análise e Controle",
+        icone: "📊",
+        itens: [
+          "Análise de desperdícios e avarias",
+          "Acompanhamento do prazo de vencimento e validade dos produtos",
+          "Comunicação com o controle comercial",
+          "Melhorias de processo"
+        ]
+      }
+    ]
+  },
+  jeffersonVirissimo: {
+    titulo: "Atribuições — Jefferson & Edgar",
+    subtitulo: "Supervisão do Turno C",
+    categorias: [
+      {
+        nome: "Gestão do Turno C",
+        icone: "🌙",
+        itens: [
+          "Coordenação geral da operação noturna",
+          "Liberação dos pedidos do turno",
+          "Co-supervisão entre Jefferson e Edgar para cobertura total",
+          "Garantia da entrega para os carregamentos do dia seguinte"
+        ]
+      },
+      {
+        nome: "Gestão da Equipe",
+        icone: "👥",
+        itens: [
+          "Distribuição de atividades entre conferentes e auxiliares",
+          "Avaliação de produtividade da equipe noturna",
+          "Acompanhamento do operador de empilhadeira (Carlos Alberto)"
+        ]
+      },
+      {
+        nome: "Análise e Controle",
+        icone: "📊",
+        itens: [
+          "Análise de desperdícios e avarias do turno",
+          "Acompanhamento do prazo de vencimento dos produtos",
+          "Comunicação com o controle comercial",
+          "Melhorias de processo do turno"
+        ]
+      }
+    ]
+  },
+  supervisoresPadrao: {
+    titulo: "Atribuições — Supervisor",
+    subtitulo: "Atribuições padrão da supervisão",
+    categorias: [
+      {
+        nome: "Gestão e Processos",
+        icone: "👔",
+        itens: [
+          "Gestão de processos e rotinas",
+          "Gestão das equipes",
+          "Desenvolve os líderes",
+          "Avalia procedimentos operacionais",
+          "Melhorias de processo"
+        ]
+      },
+      {
+        nome: "Análise e Controle",
+        icone: "📊",
+        itens: [
+          "Avaliação de produtividade",
+          "Análise de controle de desperdícios e avarias",
+          "Acompanha prazo de vencimento e validade dos produtos",
+          "Estabelece comunicação com o controle comercial"
+        ]
+      },
+      {
+        nome: "Operação",
+        icone: "📦",
+        itens: [
+          "Liberação dos pedidos"
+        ]
+      }
+    ]
+  },
+  auxiliaresTurnoBC: {
+    titulo: "Atribuições — Auxiliares",
+    subtitulo: "Auxiliares de Logística (Turnos B e C)",
+    categorias: [
+      {
+        nome: "Separação",
+        icone: "📦",
+        itens: [
+          "Separação dos itens dos pedidos",
+          "Armazena os pedidos em carrinhos e leva para conferência",
+          "Separa os pedidos de acordo com as prioridades das cargas"
+        ]
+      },
+      {
+        nome: "Operação",
+        icone: "🧹",
+        itens: [
+          "Limpeza dos produtos"
+        ]
+      },
+      {
+        nome: "Apoio",
+        icone: "🤝",
+        itens: [
+          "Apoio Liderança",
+          "Apoio Checkout"
+        ]
+      }
+    ]
+  },
+  conferentesTurnoBC: {
+    titulo: "Atribuições — Conferentes",
+    subtitulo: "Equipe de conferência (Turnos B e C)",
+    categorias: [
+      {
+        nome: "Conferência",
+        icone: "📋",
+        itens: [
+          "Conferência dos itens do pedido",
+          "Limpeza e fiscalização dos produtos"
+        ]
+      },
+      {
+        nome: "Embalagem e Identificação",
+        icone: "📦",
+        itens: [
+          "Embalagem dos produtos",
+          "Etiquetagem de código de barras",
+          "Identificação dos volumes"
+        ]
+      },
+      {
+        nome: "Apoio e Expedição",
+        icone: "🚛",
+        itens: [
+          "Apoio Liderança",
+          "Apoio a separação",
+          "Transferência dos volumes conferidos para o setor de expedição"
+        ]
+      }
+    ]
+  },
+  empilhadeira: {
+    titulo: "Atribuições — Operador de Empilhadeira",
+    subtitulo: "Função especializada de movimentação",
+    categorias: [
+      {
+        nome: "Operação",
+        icone: "🏗️",
+        itens: [
+          "Operar empilhadeira",
+          "Manuseia produtos",
+          "Realiza a movimentação de paletes entre diferentes níveis do armazém (subida e descida) e entre áreas de armazenamento"
+        ]
+      },
+      {
+        nome: "Apoio e Controle",
+        icone: "📋",
+        itens: [
+          "Colaborar com as equipes de estoque e recebimento",
+          "Manter registros precisos das operações de movimentação realizadas, auxiliando no rastreabilidade dos produtos"
+        ]
+      }
+    ]
+  },
+  conferentesVanessa: {
+    titulo: "Atribuições — Conferentes",
+    subtitulo: "Conferentes sob a Vanessa Ribeiro",
+    categorias: [
+      {
+        nome: "Recebimento e Tratamento",
+        icone: "📋",
+        itens: [
+          "Recebimento — conferência",
+          "Tratamento — etiquetar e embalar"
+        ]
+      },
+      {
+        nome: "Armazenagem",
+        icone: "🏭",
+        itens: [
+          "Armazenagem — paletizar e identificar",
+          "Endereçamento — pulmão"
+        ]
+      },
+      {
+        nome: "Pós-venda",
+        icone: "↩️",
+        itens: [
+          "Devolução, troca, defeito e reentrega"
+        ]
+      }
+    ]
+  },
+  auxiliaresVanessa: {
+    titulo: "Atribuições — Auxiliares",
+    subtitulo: "Auxiliares de Armazenagem sob a Vanessa Ribeiro",
+    categorias: [
+      {
+        nome: "Organização do Armazém",
+        icone: "🗂️",
+        itens: [
+          "Organização do PPP",
+          "Organização do Pesado",
+          "Organização geral do armazém"
+        ]
+      },
+      {
+        nome: "Abastecimento",
+        icone: "📦",
+        itens: [
+          "Abastecimento do picking",
+          "Abastecimento do pulmão"
+        ]
+      },
+      {
+        nome: "Inventário",
+        icone: "📑",
+        itens: [
+          "Participação no Inventário"
+        ]
+      }
+    ]
+  },
+  cleiton: {
+    titulo: "Atribuições — Cleiton Aparecido",
+    subtitulo: "Supervisor de Carregamento (Turno C)",
+    categorias: [
+      {
+        nome: "Coordenação e Supervisão",
+        icone: "👔",
+        itens: [
+          "Coordena a chegada e o carregamento dos carros",
+          "Acompanha carregamento, organização e transporte de cargas, de acordo com o produto e itinerário de entrega, a fim de evitar danos",
+          "Delega atividades aos auxiliares de logística",
+          "Orienta e acompanha profissionais de menor experiência",
+          "Supervisiona atividades e escalas, inspeciona documentação"
+        ]
+      },
+      {
+        nome: "Responsabilidades Operacionais",
+        icone: "📦",
+        itens: [
+          "Responsável pela finalização dos pesados",
+          "Responsável pelas ocorrências de devolução",
+          "Liberação para carregamento"
+        ]
+      }
+    ]
+  },
+  equipeCleiton: {
+    titulo: "Atribuições — Equipe de Carregamento",
+    subtitulo: "Colaboradores sob o Cleiton Aparecido",
+    categorias: [
+      {
+        nome: "Conferência",
+        icone: "📋",
+        itens: [
+          "Conferência dos pesados",
+          "Conferência dos volumes",
+          "Conferência dos pedidos complementares"
+        ]
+      },
+      {
+        nome: "Carregamento",
+        icone: "🚚",
+        itens: [
+          "Carregamento dos carros",
+          "Carregamento dos pesados"
+        ]
+      }
+    ]
+  },
+  rogerio: {
+    titulo: "Atribuições — Rogério de Ana Machado",
+    subtitulo: "Coordenação do setor de transporte",
+    categorias: [
+      {
+        nome: "Coordenação e Gestão",
+        icone: "👔",
+        itens: [
+          "Coordenar o setor de transporte",
+          "Atua com contratação de motoristas e freteiros",
+          "Gestão de toda equipe Motoristas e entregadores e Interna",
+          "Responsável pela jornada de trabalho dos entregadores",
+          "Definições de carros para retiradas",
+          "Participa de reuniões para alinhar estratégias e garantir agilidade nos processos",
+          "Suporte Fornecedores / Coordenadores"
+        ]
+      },
+      {
+        nome: "Análise e Indicadores",
+        icone: "📊",
+        itens: [
+          "Verifica custos logísticos de transporte e elaborar planilhas e relatórios",
+          "Analisa e propõe soluções para os problemas da área",
+          "Coleta dados, divulga e implementa melhorias nos indicadores de desempenho",
+          "Monitora o desempenho dos motoristas"
+        ]
+      },
+      {
+        nome: "Frota e Manutenção",
+        icone: "🛠️",
+        itens: [
+          "Responsável pela manutenção da frota",
+          "Negociação com fornecedores de peças — manutenção",
+          "Administrar Check List dos veículos (avarias, pneus, sistema elétrico, higienização, arrefecimento, freios, equipamentos obrigatórios, troca de óleo)",
+          "Auditar a verificação do nível do líquido de arrefecimento do reservatório",
+          "Auditar a verificação do nível do combustível",
+          "Acompanhar prazos ou quilometragem para revisões periódicas",
+          "Providenciar revisões periódicas",
+          "Administrar e acompanhar pequenos reparos mecânicos de emergência"
+        ]
+      }
+    ]
+  },
+  motoristas: {
+    titulo: "Atribuições e Atividades — Motoristas",
+    subtitulo: "Funções operacionais sob responsabilidade do Rogério",
+    categorias: [
+      {
+        nome: "Entregas e Operação",
+        icone: "🚚",
+        itens: [
+          "Efetuar entrega de pedidos nos clientes",
+          "Organizar as cargas no veículo",
+          "Auxiliar na carga e descarga do veículo",
+          "Separação e conferência da mercadoria no cliente",
+          "Conferência de trocas e devoluções",
+          "Conferência de recebimentos",
+          "Retirada e conferência de mercadorias nos fornecedores",
+          "Verificar condições físicas da carga",
+          "Carregar e manusear cargas"
+        ]
+      },
+      {
+        nome: "Recebimentos Financeiros",
+        icone: "💰",
+        itens: [
+          "Informar valor a receber",
+          "Receber numerário, cheques, etc.",
+          "Conferir dados do cliente para entrega de mercadorias e execução de serviços",
+          "Recolher assinatura do recebedor da mercadoria",
+          "Assinar comprovante de débito no fornecimento de combustíveis"
+        ]
+      },
+      {
+        nome: "Cuidados com o Veículo",
+        icone: "🔧",
+        itens: [
+          "Verificar nível do líquido de arrefecimento do reservatório",
+          "Identificar avarias no veículo",
+          "Verificar nível do combustível",
+          "Abastecer veículo",
+          "Verificar estado dos pneus",
+          "Testar sistema elétrico",
+          "Higienizar veículos",
+          "Testar sistema de freios",
+          "Conferir equipamentos obrigatórios do veículo",
+          "Trocar óleos"
+        ]
+      }
+    ]
+  }
+};
 
-function buildRotaCard(r, i) {
-  return `
-    <div class="rota-card" data-rota="${r.rota}">
-      <div class="rota-card-head">
-        <div class="rota-card-rank">ROTA · ${String(i+1).padStart(2,'0')} / ${ROTAS.length}</div>
-        <div class="rota-card-name">${r.rota}</div>
-        <div class="rota-card-freq">
-          <div class="rota-freq-item">
-            <span class="rota-freq-lbl">Cargas/mês</span>
-            <span class="rota-freq-val mono" data-val="cmes">${r.cargas_mes.toString().replace('.', ',')}</span>
-          </div>
-          <div class="rota-freq-item">
-            <span class="rota-freq-lbl">Cargas/semana</span>
-            <span class="rota-freq-val mono" data-val="csem">${r.cargas_semana.toString().replace('.', ',')}</span>
-          </div>
-          <div class="rota-freq-item">
-            <span class="rota-freq-lbl">Pedidos/mês</span>
-            <span class="rota-freq-val mono" data-val="pmes">${r.pedidos_mes.toString().replace('.', ',')}</span>
-          </div>
-        </div>
-      </div>
+// ============================================================
+// HELPERS
+// ============================================================
+function iniciais(nome) {
+  return nome.trim().split(/\s+/).slice(0, 2).map(p => p[0]).join('').toUpperCase();
+}
 
-      <div class="rota-card-body">
-        <!-- INTEGRAL -->
-        <div class="otica-col">
-          <div class="otica-tag">A · Integral</div>
-          <div class="otica-title">1 dupla dedicada</div>
-          <div class="otica-desc">Motorista e ajudante alocados 100% à rota, salário cheio</div>
-          <div class="otica-breakdown">
-            <div class="otica-line"><span class="lbl">Caminhão</span><span class="val" data-out="intCam">—</span></div>
-            <div class="otica-line"><span class="lbl">Motorista</span><span class="val" data-out="intMot">—</span></div>
-            <div class="otica-line"><span class="lbl">Ajudante</span><span class="val" data-out="intAj">—</span></div>
-          </div>
-          <div class="otica-totals">
-            <div class="otica-tot">
-              <div class="otica-tot-lbl">Sem ajud.</div>
-              <div class="otica-tot-val" data-out="intSem">—</div>
-            </div>
-            <div class="otica-tot">
-              <div class="otica-tot-lbl">Com ajud.</div>
-              <div class="otica-tot-val" data-out="intCom">—</div>
-            </div>
-          </div>
-          <div class="otica-delta">
-            <span class="otica-delta-lbl">Δ ajudante</span>
-            <span class="otica-delta-val" data-out="intDelta">—</span>
-          </div>
-        </div>
+// Ícones SVG por nível (estilo monocromático, herda currentColor)
+const ICONES = {
+  diretor: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L4 6 V12 C4 16.5 7.5 20.5 12 22 C16.5 20.5 20 16.5 20 12 V6 Z"/><path d="M9 11 L11 13 L15 9"/></svg>`,
+  gerente: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3.5"/><path d="M5.5 21 C5.5 16.5 8.5 14 12 14 C15.5 14 18.5 16.5 18.5 21"/><path d="M9 18 L12 21 L15 18" opacity="0.5"/></svg>`,
+  supervisor: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3 19 C3 15.5 5.5 13.5 9 13.5 C12.5 13.5 15 15.5 15 19"/><path d="M13.5 13.5 C16 13.5 18.5 14.5 19.5 17"/></svg>`,
+  lider: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 L5 14 L10 9 L14 13 L19 8 L19 19 Z" fill="currentColor" fill-opacity="0.15"/><path d="M5 19 L5 14 L10 9 L14 13 L19 8 L19 19 Z"/><path d="M3 19 L21 19"/></svg>`,
+  analista: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5 L19 5 L19 19 L5 19 Z" fill="currentColor" fill-opacity="0.1"/><path d="M5 5 L19 5 L19 19 L5 19 Z"/><path d="M8 15 L8 11 M11 15 L11 8 M14 15 L14 12 M17 15 L17 9"/></svg>`,
+  assistente: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="6" width="14" height="14" rx="1.5" fill="currentColor" fill-opacity="0.1"/><rect x="5" y="6" width="14" height="14" rx="1.5"/><path d="M9 4 L9 8 M15 4 L15 8"/><path d="M8 12 L16 12 M8 15 L13 15"/></svg>`,
+  conferente: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="16" rx="1.5" fill="currentColor" fill-opacity="0.1"/><rect x="5" y="5" width="14" height="16" rx="1.5"/><path d="M8 3 L16 3 L16 7 L8 7 Z"/><path d="M8.5 12 L10.5 14 L15 10"/></svg>`,
+  aux: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 L4 11 L9 8 L15 8 L20 11 L20 18 Z" fill="currentColor" fill-opacity="0.1"/><path d="M4 18 L4 11 L9 8 L15 8 L20 11 L20 18 Z"/><circle cx="8" cy="18" r="2"/><circle cx="16" cy="18" r="2"/><path d="M9 8 L9 11 L15 11 L15 8"/></svg>`,
+  motorista: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 16 L2 9 L11 9 L11 16 Z" fill="currentColor" fill-opacity="0.1"/><path d="M2 16 L2 9 L11 9 L11 16"/><path d="M11 11 L17 11 L20 14 L20 16 L11 16" fill="currentColor" fill-opacity="0.1"/><path d="M11 11 L17 11 L20 14 L20 16 L11 16"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/></svg>`,
+  servicos: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3 L17.7 9.3 L9.5 17.5 L6 18 L6.5 14.5 Z" fill="currentColor" fill-opacity="0.15"/><path d="M14.7 6.3 L17.7 9.3 L9.5 17.5 L6 18 L6.5 14.5 Z"/><path d="M13 8 L16 11"/></svg>`
+};
 
-        <!-- PROPORCIONAL -->
-        <div class="otica-col">
-          <div class="otica-tag">B · Proporcional</div>
-          <div class="otica-title">Custo rateado</div>
-          <div class="otica-desc">Apenas o que a rota efetivamente consumiu de motorista e ajudante</div>
-          <div class="otica-breakdown">
-            <div class="otica-line"><span class="lbl">Caminhão</span><span class="val" data-out="propCam">—</span></div>
-            <div class="otica-line"><span class="lbl">Motorista</span><span class="val" data-out="propMot">—</span></div>
-            <div class="otica-line"><span class="lbl">Ajudante</span><span class="val" data-out="propAj">—</span></div>
-          </div>
-          <div class="otica-totals">
-            <div class="otica-tot">
-              <div class="otica-tot-lbl">Sem ajud.</div>
-              <div class="otica-tot-val" data-out="propSem">—</div>
-            </div>
-            <div class="otica-tot">
-              <div class="otica-tot-lbl">Com ajud.</div>
-              <div class="otica-tot-val" data-out="propCom">—</div>
-            </div>
-          </div>
-          <div class="otica-delta">
-            <span class="otica-delta-lbl">Δ ajudante</span>
-            <span class="otica-delta-val" data-out="propDelta">—</span>
-          </div>
-        </div>
-      </div>
+function iconePorNivel(nivel) {
+  return ICONES[nivel] || ICONES.aux;
+}
 
-      <div class="rota-card-foot">
-        <span>Faturamento/mês: <strong>${fmtBRL(r.fat_mes)}</strong></span>
-        <span>% custo COM ajud. (prop.): <strong data-out="propPct">—</strong></span>
+function contarEquipe(sup) {
+  let total = 0;
+  for (const grupo in sup.equipe) total += sup.equipe[grupo].length;
+  return total;
+}
+
+function totalGeral() {
+  let n = 1; // Eduardo
+  ESTRUTURA.areasDir.forEach(a => { n += 1 + contarEquipe(a); });
+  n += 1; // Gerente
+  ESTRUTURA.areasGerencia.forEach(a => { n += 1 + contarEquipe(a); });
+  if (ESTRUTURA.areasIndep) n += ESTRUTURA.areasIndep.length;
+  ESTRUTURA.supervisores.forEach(s => { n += 1 + contarEquipe(s); });
+  return n;
+}
+
+function totalLiderancas() {
+  let n = 1; // Eduardo
+  n += ESTRUTURA.areasDir.length;
+  n += 1; // Gerente
+  n += ESTRUTURA.areasGerencia.length;
+  if (ESTRUTURA.areasIndep) {
+    n += ESTRUTURA.areasIndep.filter(a => ['lider','supervisor'].includes(a.nivel)).length;
+  }
+  ESTRUTURA.supervisores.forEach(s => {
+    n += 1;
+    for (const grupo in s.equipe) {
+      s.equipe[grupo].forEach(p => {
+        if (['lider', 'supervisor'].includes(p.nivel)) n++;
+      });
+    }
+  });
+  return n;
+}
+
+function totalMotoristas() {
+  const motSup = ESTRUTURA.supervisores.find(s => s.turno === 'M');
+  return motSup ? contarEquipe(motSup) : 0;
+}
+
+// ============================================================
+// RENDERIZAÇÃO
+// ============================================================
+function renderCard(pessoa, expandable = false, count = 0, subtle = false) {
+  const div = document.createElement('div');
+  div.className = `exec-card level-${pessoa.nivel}` + (expandable ? ' expandable' : '') + (subtle ? ' subtle' : '');
+  let html = `
+    <div class="avatar">${iconePorNivel(pessoa.nivel)}</div>
+    <div class="nome">${pessoa.nome}</div>
+    <div class="cargo">${pessoa.cargo}</div>
+  `;
+  if (expandable) {
+    html += `<div class="team-info"><span>Equipe direta</span><span class="count">${count}</span></div>`;
+  }
+  // Suporta tanto atribuicoesKey (single) quanto atribuicoes (array)
+  if (pessoa.atribuicoes && pessoa.atribuicoes.length) {
+    pessoa.atribuicoes.forEach(a => {
+      html += `<button class="btn-atribuicoes" onclick="event.stopPropagation();abrirAtribuicoes('${a.key}')">${a.label}</button>`;
+    });
+  } else if (pessoa.atribuicoesKey) {
+    html += `<button class="btn-atribuicoes" onclick="event.stopPropagation();abrirAtribuicoes('${pessoa.atribuicoesKey}')">📋 Ver atribuições</button>`;
+  }
+  div.innerHTML = html;
+  return div;
+}
+
+function renderTeamPanel(sup) {
+  const panel = document.createElement('div');
+  panel.className = 'team-panel';
+  panel.id = `panel-${sup.id}`;
+
+  let html = `
+    <div class="team-panel-header">
+      <div class="team-panel-title">
+        ${sup.nome}
+        <span>· ${contarEquipe(sup)} ${contarEquipe(sup) === 1 ? 'pessoa' : 'pessoas'} sob responsabilidade direta</span>
       </div>
     </div>
   `;
+
+  for (const grupo in sup.equipe) {
+    const membros = sup.equipe[grupo];
+    if (!membros.length) continue;
+    // Seções que devem ser destacadas (subáreas dentro da equipe)
+    const SECOES_DESTACADAS = ['Inventário', 'Setor de Retira', 'E-commerce', 'Devolução'];
+    const destaque = SECOES_DESTACADAS.includes(grupo);
+    html += `<div class="team-panel-section${destaque ? ' highlighted' : ''}">`;
+    html += `<div class="team-panel-section-title">${grupo} · ${membros.length}</div>`;
+    html += `<div class="team-panel-list">`;
+    membros.forEach(m => {
+      const temAtrib = m.atribuicoesKey || (m.atribuicoes && m.atribuicoes.length);
+      const btnAtrib = temAtrib
+        ? `<button class="member-atrib-btn" onclick="event.stopPropagation();abrirAtribuicoes('${m.atribuicoesKey || m.atribuicoes[0].key}')" title="Ver atribuições">📋</button>`
+        : '';
+      const classeVaga = m.vaga ? ' vaga' : '';
+      // Ícone "?" para vagas em aberto
+      const iconeMembro = m.vaga
+        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9 A2.5 2.5 0 0 1 14.5 9 C14.5 11 12 11.5 12 13.5"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>`
+        : iconePorNivel(m.nivel);
+      html += `
+        <div class="team-member${classeVaga}">
+          <div class="mini-avatar">${iconeMembro}</div>
+          <div class="member-info">
+            <div class="member-name">${m.nome}${m.tag ? `<span class="member-tag">${m.tag}</span>` : ''}</div>
+            <div class="member-role">${m.cargo}</div>
+          </div>
+          ${btnAtrib}
+        </div>
+      `;
+    });
+    html += `</div></div>`;
+  }
+
+  panel.innerHTML = html;
+  return panel;
 }
 
-const grid = document.getElementById('rotasGrid');
-grid.innerHTML = ROTAS.map((r,i) => buildRotaCard(r,i)).join('');
+function montarArvore() {
+  const tree = document.getElementById('tree');
+  tree.innerHTML = '';
 
-function recalc() {
-  const v = Object.fromEntries(Object.entries(inputs).map(([k,el]) => [k, parseFloat(el.value) || 0]));
+  // Linha 1: Diretoria — Eduardo + Baby + Robson lado a lado
+  const rowDir = document.createElement('div');
+  rowDir.className = 'tree-row row-supervisors';
+  rowDir.appendChild(renderCard(ESTRUTURA.diretor, false));
 
-  // Totais consolidados
-  let totIntCam = 0, totIntMot = 0, totIntAj = 0;
-  let totPropCam = 0, totPropMot = 0, totPropAj = 0;
-
-  ROTAS.forEach((r, i) => {
-    const card = grid.children[i];
-
-    // ÓTICA INTEGRAL
-    const intCam = v.custoKm * v.kmCarga * r.cargas_mes;
-    const intMot = v.motMes;
-    const intAj = v.ajMes;
-    const intSem = intCam + intMot;
-    const intCom = intSem + intAj;
-
-    // ÓTICA PROPORCIONAL
-    const custoMotCarga = v.motMes / v.diasUteis;
-    const custoAjCarga = v.ajMes / v.diasUteis;
-    const propCam = v.custoKm * v.kmCarga * r.cargas_mes;
-    const propMot = custoMotCarga * r.cargas_mes;
-    const propAj = custoAjCarga * r.cargas_mes;
-    const propSem = propCam + propMot;
-    const propCom = propSem + propAj;
-
-    // Preencher card
-    const set = (k, val) => {
-      const el = card.querySelector(`[data-out="${k}"]`);
-      if (el) el.textContent = val;
-    };
-
-    set('intCam', fmtBRL2(intCam));
-    set('intMot', fmtBRL2(intMot));
-    set('intAj', fmtBRL2(intAj));
-    set('intSem', fmtBRL(intSem));
-    set('intCom', fmtBRL(intCom));
-    set('intDelta', '+' + fmtBRL2(intAj));
-
-    set('propCam', fmtBRL2(propCam));
-    set('propMot', fmtBRL2(propMot));
-    set('propAj', fmtBRL2(propAj));
-    set('propSem', fmtBRL(propSem));
-    set('propCom', fmtBRL(propCom));
-    set('propDelta', '+' + fmtBRL2(propAj));
-    set('propPct', r.fat_mes > 0 ? fmtPct(propCom / r.fat_mes) : '—');
-
-    // Acumular
-    totIntCam += intCam;
-    totIntMot += intMot;
-    totIntAj += intAj;
-    totPropCam += propCam;
-    totPropMot += propMot;
-    totPropAj += propAj;
+  // Áreas que reportam à diretoria (Baby e Robson — expansíveis)
+  ESTRUTURA.areasDir.forEach(area => {
+    const card = renderCard(area, true, contarEquipe(area));
+    card.dataset.supId = area.id;
+    card.onclick = () => toggleEquipe(area.id);
+    rowDir.appendChild(card);
   });
 
-  // Consolidado
-  document.getElementById('totIntCam').textContent = fmtBRL(totIntCam);
-  document.getElementById('totIntMot').textContent = fmtBRL(totIntMot);
-  document.getElementById('totIntAj').textContent = fmtBRL(totIntAj);
-  document.getElementById('totIntCom').textContent = fmtBRL(totIntCam + totIntMot + totIntAj);
+  tree.appendChild(rowDir);
 
-  document.getElementById('totPropCam').textContent = fmtBRL(totPropCam);
-  document.getElementById('totPropMot').textContent = fmtBRL(totPropMot);
-  document.getElementById('totPropAj').textContent = fmtBRL(totPropAj);
-  document.getElementById('totPropCom').textContent = fmtBRL(totPropCam + totPropMot + totPropAj);
+  // Painéis das áreas de diretoria (logo abaixo)
+  ESTRUTURA.areasDir.forEach(area => {
+    tree.appendChild(renderTeamPanel(area));
+  });
 
-  document.getElementById('deltaProp').textContent = '+' + fmtBRL(totPropAj);
-  document.getElementById('deltaInt').textContent = '+' + fmtBRL(totIntAj);
-  document.getElementById('pctFat').textContent = fmtPct(totPropAj / FAT_MES_TOTAL);
+  // Conector
+  const line1 = document.createElement('div');
+  line1.className = 'tree-line';
+  tree.appendChild(line1);
+
+  // Linha 2: Gerentes (Gabriel Logístico + Robson Facilities lado a lado)
+  const rowGer = document.createElement('div');
+  rowGer.className = 'tree-row';
+  rowGer.appendChild(renderCard(ESTRUTURA.gerente, false));
+  ESTRUTURA.areasGerencia.forEach(area => {
+    const card = renderCard(area, true, contarEquipe(area));
+    card.dataset.supId = area.id;
+    card.onclick = () => toggleEquipe(area.id);
+    rowGer.appendChild(card);
+  });
+  tree.appendChild(rowGer);
+
+  // Painéis das áreas de gerência
+  ESTRUTURA.areasGerencia.forEach(area => {
+    tree.appendChild(renderTeamPanel(area));
+  });
+
+  // Áreas independentes (sutis) — Erivancleide (Retira) + Lucas Souza (Faturamento)
+  if (ESTRUTURA.areasIndep && ESTRUTURA.areasIndep.length) {
+    const indepTitle = document.createElement('div');
+    indepTitle.className = 'shift-section-title';
+    indepTitle.textContent = 'Áreas vinculadas à Gerência';
+    tree.appendChild(indepTitle);
+
+    const rowIndep = document.createElement('div');
+    rowIndep.className = 'tree-row row-supervisors';
+    ESTRUTURA.areasIndep.forEach(area => {
+      rowIndep.appendChild(renderCard(area, false, 0, true));
+    });
+    tree.appendChild(rowIndep);
+  }
+
+  // Conector
+  const line2 = document.createElement('div');
+  line2.className = 'tree-line';
+  tree.appendChild(line2);
+
+  // Linha 3: Supervisores
+  const supTitle = document.createElement('div');
+  supTitle.className = 'shift-section-title';
+  supTitle.textContent = 'Lideranças operacionais';
+  tree.appendChild(supTitle);
+
+  const rowSup = document.createElement('div');
+  rowSup.className = 'tree-row row-supervisors';
+  ESTRUTURA.supervisores.forEach(sup => {
+    const count = contarEquipe(sup);
+    const card = renderCard(sup, count > 0, count);
+    if (count > 0) {
+      card.dataset.supId = sup.id;
+      card.onclick = () => toggleEquipe(sup.id);
+    }
+    rowSup.appendChild(card);
+  });
+  tree.appendChild(rowSup);
+
+  // Painéis dos supervisores (só os que têm equipe)
+  ESTRUTURA.supervisores.forEach(sup => {
+    if (contarEquipe(sup) > 0) tree.appendChild(renderTeamPanel(sup));
+  });
 }
 
-Object.values(inputs).forEach(el => el.addEventListener('input', recalc));
-recalc();
+function toggleEquipe(supId) {
+  const panel = document.getElementById(`panel-${supId}`);
+  const card = document.querySelector(`.exec-card[data-sup-id="${supId}"]`);
+  const isOpen = panel.classList.contains('show');
+
+  // Fecha todos
+  document.querySelectorAll('.team-panel.show').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.exec-card.expanded').forEach(c => c.classList.remove('expanded'));
+
+  if (!isOpen) {
+    panel.classList.add('show');
+    card.classList.add('expanded');
+    // Move o painel logo após a linha do card clicado
+    const rowDoCard = card.closest('.tree-row');
+    rowDoCard.parentElement.insertBefore(panel, rowDoCard.nextSibling);
+    setTimeout(() => {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
+  }
+}
+
+// ============================================================
+// KPIs
+// ============================================================
+function atualizarKPIs() {
+  const total = totalGeral();
+  const lider = totalLiderancas();
+  const mot = totalMotoristas();
+  const span = ((total - lider) / lider).toFixed(1);
+
+  document.getElementById('kpiTotal').textContent = total;
+  document.getElementById('kpiLideres').textContent = lider;
+  document.getElementById('kpiMotoristas').textContent = mot;
+  document.getElementById('kpiSpan').textContent = span;
+
+  // Span máximo e mínimo entre supervisores e áreas com equipe
+  const equipes = [];
+  ESTRUTURA.supervisores.forEach(s => {
+    const c = contarEquipe(s);
+    if (c > 0) equipes.push({ nome: s.nome.split(' ')[0], count: c, full: s.nome });
+  });
+  ESTRUTURA.areasDir.forEach(a => {
+    const c = contarEquipe(a);
+    if (c > 0) equipes.push({ nome: a.nome, count: c, full: a.nome });
+  });
+  ESTRUTURA.areasGerencia.forEach(a => {
+    const c = contarEquipe(a);
+    if (c > 0) equipes.push({ nome: a.nome, count: c, full: a.nome });
+  });
+
+  if (equipes.length) {
+    equipes.sort((a, b) => b.count - a.count);
+    const max = equipes[0];
+    const min = equipes[equipes.length - 1];
+    document.getElementById('kpiSpanMax').textContent = max.count;
+    document.getElementById('kpiSpanMaxNome').textContent = max.full;
+    document.getElementById('kpiSpanMin').textContent = min.count;
+    document.getElementById('kpiSpanMinNome').textContent = min.full;
+  }
+}
+
+// ============================================================
+// DATA
+// ============================================================
+function setarData() {
+  const hoje = new Date();
+  const opts = { day: '2-digit', month: 'long', year: 'numeric' };
+  const str = hoje.toLocaleDateString('pt-BR', opts);
+  document.getElementById('reportDate').textContent = `Documento gerado em ${str}`;
+  document.getElementById('footerDate').textContent = str;
+}
+
+// ============================================================
+// EXPORT PDF (geração programática nativa - texto selecionável)
+// ============================================================
+const PDF_THEME = {
+  bg: [13, 17, 23],          // #0d1117 fundo principal
+  bgCard: [28, 34, 48],      // #1c2230 cards
+  bgCardAlt: [22, 27, 39],   // entre os dois
+  gold: [212, 175, 55],      // #d4af37 ouro
+  goldDark: [184, 148, 31],
+  text: [241, 245, 249],     // #f1f5f9 texto principal
+  textDim: [203, 213, 225],  // #cbd5e1 texto secundário
+  textMute: [148, 163, 184], // #94a3b8 texto fraco
+  line: [148, 163, 184],     // bordas (com alpha)
+  white: [255, 255, 255]
+};
+
+async function baixarPDF() {
+  const btn = document.getElementById('btnPdf');
+  const textoOriginal = btn.textContent;
+  btn.textContent = '⏳ Gerando PDF...';
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait', compress: true });
+
+    // ============================================================
+    // CONSTANTES
+    // ============================================================
+    const PAGE_W = pdf.internal.pageSize.getWidth();   // 595.28
+    const PAGE_H = pdf.internal.pageSize.getHeight();  // 841.89
+    const MARGIN = 36;
+    const CONTENT_W = PAGE_W - 2 * MARGIN;
+    const FOOTER_Y = PAGE_H - 30;
+
+    const COR = {
+      bg: [13, 17, 23],
+      bgCard: [26, 32, 44],
+      bgCardGold: [40, 33, 18],
+      gold: [212, 175, 55],
+      goldLight: [244, 213, 116],
+      text: [248, 250, 252],
+      textDim: [203, 213, 225],
+      textMute: [148, 163, 184],
+      border: [55, 65, 81],
+      green: [74, 222, 128]
+    };
+
+    let y = MARGIN;
+
+    // ============================================================
+    // HELPERS PRIMITIVOS
+    // ============================================================
+    const setFill = c => pdf.setFillColor(c[0], c[1], c[2]);
+    const setStroke = c => pdf.setDrawColor(c[0], c[1], c[2]);
+    const setText = c => pdf.setTextColor(c[0], c[1], c[2]);
+
+    function pintarFundo() {
+      setFill(COR.bg);
+      pdf.rect(0, 0, PAGE_W, PAGE_H, 'F');
+    }
+
+    function rodape() {
+      const data = new Date().toLocaleDateString('pt-BR');
+      setStroke(COR.gold);
+      pdf.setLineWidth(0.4);
+      pdf.line(MARGIN, FOOTER_Y - 6, PAGE_W - MARGIN, FOOTER_Y - 6);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      setText(COR.textMute);
+      pdf.text(`Logística · Estrutura vigente em ${data}`, MARGIN, FOOTER_Y + 6);
+      setText(COR.gold);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('CONFIDENCIAL', PAGE_W - MARGIN, FOOTER_Y + 6, { align: 'right' });
+    }
+
+    function faixaTopo() {
+      setFill(COR.gold);
+      pdf.rect(0, 0, PAGE_W, 4, 'F');
+    }
+
+    function novaPagina() {
+      pdf.addPage();
+      pintarFundo();
+      faixaTopo();
+      rodape();
+      y = MARGIN + 16;
+    }
+
+    function garantirEspaco(altura) {
+      if (y + altura > FOOTER_Y - 12) {
+        novaPagina();
+        return true;
+      }
+      return false;
+    }
+
+    function tituloPagina(titulo, subtitulo) {
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(20);
+      setText(COR.text);
+      pdf.text(titulo, MARGIN, y + 14);
+      setStroke(COR.gold);
+      pdf.setLineWidth(2);
+      pdf.line(MARGIN, y + 22, MARGIN + 60, y + 22);
+      y += 32;
+      if (subtitulo) {
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(10);
+        setText(COR.textDim);
+        pdf.text(subtitulo, MARGIN, y);
+        y += 16;
+      }
+      y += 8;
+    }
+
+    function tituloSecao(texto) {
+      garantirEspaco(28);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(9);
+      setText(COR.gold);
+      pdf.text(texto, MARGIN, y + 10);
+      const tw = pdf.getTextWidth(texto);
+      setStroke(COR.gold);
+      pdf.setLineWidth(0.3);
+      pdf.line(MARGIN + tw + 8, y + 7, PAGE_W - MARGIN, y + 7);
+      y += 18;
+    }
+
+    // ============================================================
+    // DESENHAR LINHA DE CARDS (cabeças)
+    // ============================================================
+    function desenharLinhaCards(items, opts = {}) {
+      const destaque = opts.destaque || false;
+      const cardH = 56;
+      const gap = 8;
+      const maxPorLinha = Math.min(items.length, 5);
+
+      let idx = 0;
+      while (idx < items.length) {
+        const fim = Math.min(idx + maxPorLinha, items.length);
+        const linha = items.slice(idx, fim);
+        const cardW = (CONTENT_W - gap * (linha.length - 1)) / linha.length;
+
+        garantirEspaco(cardH + 12);
+
+        linha.forEach((item, i) => {
+          const x = MARGIN + i * (cardW + gap);
+          // fundo
+          setFill(destaque ? COR.bgCardGold : COR.bgCard);
+          pdf.roundedRect(x, y, cardW, cardH, 4, 4, 'F');
+          // borda
+          setStroke(COR.gold);
+          pdf.setLineWidth(destaque ? 0.8 : 0.3);
+          pdf.roundedRect(x, y, cardW, cardH, 4, 4, 'S');
+
+          // Nome
+          pdf.setFont('helvetica', 'bold');
+          pdf.setFontSize(9);
+          setText(COR.text);
+          const linhasNome = pdf.splitTextToSize(item.nome, cardW - 16);
+          pdf.text(linhasNome[0], x + 8, y + 14);
+          let nextY = 14;
+          if (linhasNome[1]) { pdf.text(linhasNome[1], x + 8, y + 24); nextY = 24; }
+
+          // Cargo
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(7.5);
+          setText(COR.textDim);
+          const linhasCargo = pdf.splitTextToSize(item.cargo, cardW - 16);
+          pdf.text(linhasCargo[0], x + 8, y + nextY + 10);
+          if (linhasCargo[1]) pdf.text(linhasCargo[1], x + 8, y + nextY + 18);
+
+          // Equipe
+          if (item.count !== undefined && item.count > 0) {
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(7);
+            setText(COR.textMute);
+            pdf.text('Equipe:', x + 8, y + cardH - 6);
+            pdf.setFont('helvetica', 'bold');
+            setText(COR.gold);
+            pdf.text(String(item.count), x + cardW - 8, y + cardH - 6, { align: 'right' });
+          }
+        });
+
+        y += cardH + 10;
+        idx = fim;
+      }
+    }
+
+    // ============================================================
+    // DESENHAR EQUIPE COMPLETA (lista de membros)
+    // ============================================================
+    function desenharEquipe(lider, equipe) {
+      const totalMembros = Object.values(equipe).reduce((a, arr) => a + arr.length, 0);
+      if (totalMembros === 0) return;
+
+      // Calcula altura aproximada do bloco
+      let alturaPrevista = 30;
+      for (const grupo in equipe) {
+        if (!equipe[grupo].length) continue;
+        alturaPrevista += 16;
+        alturaPrevista += Math.ceil(equipe[grupo].length / 3) * 20;
+      }
+      alturaPrevista += 12;
+
+      // Se não cabe na página, quebra
+      garantirEspaco(alturaPrevista);
+
+      const startY = y;
+      const cardX = MARGIN;
+      const cardW = CONTENT_W;
+
+      // Header do bloco
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(11);
+      setText(COR.text);
+      pdf.text(lider, cardX + 12, y + 16);
+      const liderW = pdf.getTextWidth(lider);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      setText(COR.textDim);
+      pdf.text(`· ${totalMembros} ${totalMembros === 1 ? 'pessoa' : 'pessoas'} sob responsabilidade direta`,
+               cardX + 12 + liderW + 4, y + 16);
+
+      y += 22;
+      // Linha separadora
+      setStroke(COR.gold);
+      pdf.setLineWidth(0.3);
+      pdf.line(cardX + 12, y, cardX + cardW - 12, y);
+      y += 6;
+
+      const destacadas = ['Inventário', 'Setor de Retira', 'E-commerce', 'Devolução'];
+
+      for (const grupo in equipe) {
+        const membros = equipe[grupo];
+        if (!membros.length) continue;
+
+        // Título do grupo
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(7.5);
+        setText(COR.gold);
+        pdf.text(`${grupo.toUpperCase()}  ·  ${membros.length}`, cardX + 12, y + 8);
+        if (destacadas.includes(grupo)) {
+          // Badge "DESTAQUE" em dourado
+          const badge = 'DESTAQUE';
+          pdf.setFontSize(6);
+          const bw = pdf.getTextWidth(badge) + 8;
+          setFill(COR.gold);
+          pdf.roundedRect(cardX + cardW - 12 - bw, y + 1, bw, 9, 2, 2, 'F');
+          setText(COR.bg);
+          pdf.text(badge, cardX + cardW - 12 - bw + 4, y + 7);
+        }
+        y += 14;
+
+        // Membros em 3 colunas
+        const colW = (cardW - 24) / 3;
+        membros.forEach((m, i) => {
+          const col = i % 3;
+          const row = Math.floor(i / 3);
+          const xM = cardX + 12 + col * colW;
+          const yM = y + row * 20;
+
+          // Bullet dourado
+          setFill(COR.gold);
+          pdf.circle(xM + 3, yM + 6, 1.5, 'F');
+
+          // Nome
+          pdf.setFont('helvetica', 'bold');
+          pdf.setFontSize(8.5);
+          setText(COR.text);
+          const nomeT = pdf.splitTextToSize(m.nome, colW - 14)[0] || m.nome;
+          pdf.text(nomeT, xM + 9, yM + 6);
+
+          // Cargo
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(7);
+          setText(COR.textMute);
+          let cargoT = m.cargo;
+          if (m.tag) cargoT += `   [${m.tag}]`;
+          const cargoLine = pdf.splitTextToSize(cargoT, colW - 14)[0] || cargoT;
+          pdf.text(cargoLine, xM + 9, yM + 14);
+        });
+
+        y += Math.ceil(membros.length / 3) * 20 + 4;
+      }
+
+      const cardH = y - startY + 4;
+      // Borda do card por cima
+      setStroke(COR.gold);
+      pdf.setLineWidth(0.4);
+      pdf.roundedRect(cardX, startY - 4, cardW, cardH + 4, 4, 4, 'S');
+
+      y += 14;
+    }
+
+    // ============================================================
+    // DESENHAR BLOCO DE ATRIBUIÇÕES
+    // ============================================================
+    function desenharAtribuicao(nome, cargo, chave) {
+      const dados = ATRIBUICOES[chave];
+      if (!dados) return;
+
+      // Calcula altura
+      let alt = 44;
+      dados.categorias.forEach(cat => {
+        alt += 14;
+        alt += Math.ceil(cat.itens.length / 2) * 14;
+        alt += 4;
+      });
+      alt += 12;
+
+      garantirEspaco(alt);
+
+      const cardX = MARGIN;
+      const cardW = CONTENT_W;
+      const startY = y;
+
+      // Avatar dourado redondo com iniciais
+      setFill(COR.gold);
+      pdf.circle(cardX + 24, y + 18, 12, 'F');
+      const inic = nome.split(/\s+/).slice(0, 2).map(p => p[0]).join('').toUpperCase();
+      setText(COR.bg);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(10);
+      pdf.text(inic, cardX + 24, y + 22, { align: 'center' });
+
+      // Nome e cargo
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(12);
+      setText(COR.text);
+      pdf.text(nome, cardX + 44, y + 16);
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8.5);
+      setText(COR.textDim);
+      pdf.text(cargo, cardX + 44, y + 28);
+
+      y += 38;
+      setStroke(COR.gold);
+      pdf.setLineWidth(0.3);
+      pdf.line(cardX + 12, y, cardX + cardW - 12, y);
+      y += 8;
+
+      // Categorias e itens
+      dados.categorias.forEach(cat => {
+        // Verifica se precisa quebrar antes da categoria
+        const altCat = 14 + Math.ceil(cat.itens.length / 2) * 14 + 4;
+        if (y + altCat > FOOTER_Y - 12) {
+          // Fecha o card atual e abre novo
+          setStroke(COR.gold);
+          pdf.setLineWidth(0.4);
+          pdf.roundedRect(cardX, startY - 4, cardW, y - startY + 4, 4, 4, 'S');
+          novaPagina();
+          y = MARGIN + 16;
+        }
+
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(8);
+        setText(COR.gold);
+        pdf.text(cat.nome.toUpperCase(), cardX + 12, y + 8);
+        y += 12;
+
+        const colW = (cardW - 24) / 2;
+        cat.itens.forEach((item, i) => {
+          const col = i % 2;
+          const row = Math.floor(i / 2);
+          const xI = cardX + 12 + col * colW;
+          const yI = y + row * 14;
+
+          // Marcador dourado (círculo) — desenhado nativamente para garantir renderização
+          setFill(COR.gold);
+          pdf.circle(xI + 2, yI + 3, 1.4, 'F');
+
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(8);
+          setText(COR.textDim);
+          const t = pdf.splitTextToSize(item, colW - 12);
+          pdf.text(t[0], xI + 8, yI + 5);
+          if (t[1]) pdf.text(t[1], xI + 8, yI + 13);
+        });
+
+        y += Math.ceil(cat.itens.length / 2) * 14 + 4;
+      });
+
+      y += 4;
+      // Borda final do card
+      setStroke(COR.gold);
+      pdf.setLineWidth(0.4);
+      pdf.roundedRect(cardX, startY - 4, cardW, y - startY + 4, 4, 4, 'S');
+      y += 14;
+    }
+
+    // ============================================================
+    // ============================================================
+    // EXECUÇÃO
+    // ============================================================
+    // ============================================================
+
+    // ===== PÁGINA 1: CAPA + KPIs + ÁRVORE =====
+    pintarFundo();
+    faixaTopo();
+    rodape();
+    y = MARGIN + 20;
+
+    // Título principal
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(24);
+    setText(COR.goldLight);
+    pdf.text('Estrutura Organizacional', MARGIN, y);
+    y += 22;
+
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(14);
+    setText(COR.text);
+    pdf.text('Logística', MARGIN, y);
+    y += 12;
+
+    setStroke(COR.gold);
+    pdf.setLineWidth(1);
+    pdf.line(MARGIN, y, PAGE_W - MARGIN, y);
+    y += 10;
+
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(9);
+    setText(COR.textMute);
+    const dataExt = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+    pdf.text(`Documento gerado em ${dataExt}`, MARGIN, y + 4);
+    y += 18;
+
+    // ===== KPIs =====
+    const total = totalGeral();
+    const lider = totalLiderancas();
+    const mot = totalMotoristas();
+    const span = ((total - lider) / lider).toFixed(1);
+    const equipes = [];
+    ESTRUTURA.supervisores.forEach(s => { const c = contarEquipe(s); if (c > 0) equipes.push({ nome: s.nome, count: c }); });
+    ESTRUTURA.areasDir.forEach(a => { const c = contarEquipe(a); if (c > 0) equipes.push({ nome: a.nome, count: c }); });
+    ESTRUTURA.areasGerencia.forEach(a => { const c = contarEquipe(a); if (c > 0) equipes.push({ nome: a.nome, count: c }); });
+    equipes.sort((a, b) => b.count - a.count);
+    const kMax = equipes[0];
+    const kMin = equipes[equipes.length - 1];
+
+    const kpis = [
+      { label: 'TOTAL', value: total, sub: 'colaboradores' },
+      { label: 'LIDERANÇAS', value: lider, sub: 'cargos de gestão' },
+      { label: 'TURNOS', value: 3, sub: 'M · T · N' },
+      { label: 'MOTORISTAS', value: mot, sub: 'entregadores' },
+      { label: 'SPAN MÉDIO', value: span, sub: 'sub / líder' },
+      { label: 'MAIOR EQUIPE', value: kMax.count, sub: kMax.nome.split(' ').slice(0, 2).join(' ') },
+      { label: 'MENOR EQUIPE', value: kMin.count, sub: kMin.nome.split(' ').slice(0, 2).join(' ') }
+    ];
+
+    const kpiH = 58;
+    const kpiGap = 4;
+    const kpiW = (CONTENT_W - kpiGap * 6) / 7;
+
+    kpis.forEach((k, i) => {
+      const x = MARGIN + i * (kpiW + kpiGap);
+      setFill(COR.bgCard);
+      pdf.roundedRect(x, y, kpiW, kpiH, 4, 4, 'F');
+      setStroke(COR.gold);
+      pdf.setLineWidth(0.3);
+      pdf.roundedRect(x, y, kpiW, kpiH, 4, 4, 'S');
+      // Linha decorativa no topo
+      pdf.setLineWidth(1.2);
+      pdf.line(x + 6, y, x + kpiW - 6, y);
+
+      // Label
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(6.5);
+      setText(COR.textMute);
+      const labelLines = pdf.splitTextToSize(k.label, kpiW - 12);
+      pdf.text(labelLines[0], x + 6, y + 11);
+
+      // Value
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(20);
+      setText(COR.gold);
+      pdf.text(String(k.value), x + 6, y + 34);
+
+      // Sub
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(6.5);
+      setText(COR.textDim);
+      const subLines = pdf.splitTextToSize(k.sub, kpiW - 10);
+      pdf.text(subLines[0] || '', x + 6, y + 46);
+      if (subLines[1]) pdf.text(subLines[1], x + 6, y + 53);
+    });
+
+    y += kpiH + 18;
+
+    // ===== ÁRVORE =====
+    tituloSecao('DIRETORIA');
+    desenharLinhaCards([
+      { nome: 'Eduardo Martins', cargo: 'Diretor' },
+      ...ESTRUTURA.areasDir.map(a => ({ nome: a.nome, cargo: a.cargo, count: contarEquipe(a) }))
+    ], { destaque: true });
+
+    tituloSecao('GERÊNCIA');
+    desenharLinhaCards([
+      { nome: ESTRUTURA.gerente.nome, cargo: ESTRUTURA.gerente.cargo },
+      ...ESTRUTURA.areasGerencia.map(a => ({ nome: a.nome, cargo: a.cargo, count: contarEquipe(a) }))
+    ]);
+
+    if (ESTRUTURA.areasIndep && ESTRUTURA.areasIndep.length) {
+      tituloSecao('ÁREAS VINCULADAS À GERÊNCIA');
+      desenharLinhaCards(ESTRUTURA.areasIndep.map(a => ({ nome: a.nome, cargo: a.cargo })));
+    }
+
+    tituloSecao('LIDERANÇAS OPERACIONAIS');
+    desenharLinhaCards(ESTRUTURA.supervisores.map(s => ({
+      nome: s.nome, cargo: s.cargo, count: contarEquipe(s)
+    })));
+
+    // ===== PÁGINAS DE EQUIPES =====
+    novaPagina();
+    tituloPagina('Composição das Equipes', 'Colaboradores diretos de cada liderança');
+
+    ESTRUTURA.areasDir.forEach(a => desenharEquipe(a.nome, a.equipe));
+    ESTRUTURA.areasGerencia.forEach(a => desenharEquipe(a.nome, a.equipe));
+    ESTRUTURA.supervisores.forEach(s => desenharEquipe(s.nome, s.equipe));
+
+    // ===== PÁGINAS DE ATRIBUIÇÕES =====
+    novaPagina();
+    tituloPagina('Atribuições e Responsabilidades', 'Funções de cada liderança, equipe e setor');
+
+    // Gerente
+    if (ESTRUTURA.gerente.atribuicoesKey) {
+      desenharAtribuicao(ESTRUTURA.gerente.nome, ESTRUTURA.gerente.cargo, ESTRUTURA.gerente.atribuicoesKey);
+    }
+
+    // Áreas independentes
+    (ESTRUTURA.areasIndep || []).forEach(a => {
+      if (a.atribuicoesKey) desenharAtribuicao(a.nome, a.cargo, a.atribuicoesKey);
+    });
+
+    // Supervisores com chave específica
+    const compartilhadas = ['supervisoresPadrao', 'conferentesTurnoBC', 'auxiliaresTurnoBC',
+                            'conferentesVanessa', 'auxiliaresVanessa', 'empilhadeira',
+                            'equipeCleiton', 'motoristas', 'laudiceia', 'lideresPadrao'];
+    ESTRUTURA.supervisores.forEach(sup => {
+      if (!sup.atribuicoes) return;
+      sup.atribuicoes.forEach(a => {
+        if (!compartilhadas.includes(a.key) && ATRIBUICOES[a.key]) {
+          desenharAtribuicao(sup.nome, sup.cargo, a.key);
+        }
+      });
+    });
+
+    tituloSecao('ATRIBUIÇÕES POR EQUIPE');
+
+    desenharAtribuicao('Supervisores (Padrão)', 'Atribuições comuns a todos os supervisores', 'supervisoresPadrao');
+    desenharAtribuicao('Líderes (Padrão)', 'Atribuições padrão da liderança operacional', 'lideresPadrao');
+    desenharAtribuicao('Conferentes — Recebimento', 'Equipe da Vanessa (Turno A)', 'conferentesVanessa');
+    desenharAtribuicao('Auxiliares — Armazenagem', 'Equipe da Vanessa (Turno A)', 'auxiliaresVanessa');
+    desenharAtribuicao('Conferentes — Expedição', 'Equipes do Claudio e Jefferson (Turnos B e C)', 'conferentesTurnoBC');
+    desenharAtribuicao('Auxiliares — Expedição', 'Equipes do Claudio e Jefferson (Turnos B e C)', 'auxiliaresTurnoBC');
+    desenharAtribuicao('Equipe de Carregamento', 'Sob Cleiton Aparecido (Turno C)', 'equipeCleiton');
+    desenharAtribuicao('Operador de Empilhadeira', 'Função especializada de movimentação', 'empilhadeira');
+    desenharAtribuicao('Motoristas', 'Setor de entregas (Rogério)', 'motoristas');
+    desenharAtribuicao('Laudiceia de Souza', 'Processo de Devolução (Turno A)', 'laudiceia');
+    desenharAtribuicao('Geneilda da Silva', 'Retorno Motoristas Terceirizados (Turno A)', 'geneilda');
+    desenharAtribuicao('Maria Debora Alves', 'Retorno Caminhões Próprios (Turno B)', 'mariaDebora');
+    desenharAtribuicao('Cleiton Henrique Lopes', 'Apoio à Liderança — Armazenagem (Turno A)', 'cleitonHenrique');
+
+    // Salvar
+    btn.textContent = '⏳ Salvando...';
+    pdf.save('organograma_logistica.pdf');
+
+  } catch (err) {
+    console.error('Erro PDF:', err);
+    alert('Erro ao gerar PDF: ' + err.message);
+  } finally {
+    btn.textContent = textoOriginal;
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+}
+
+
+// ============================================================
+// EXPORT EXCEL
+// ============================================================
+function exportarExcel() {
+  const rows = [];
+  rows.push(['Nível', 'Nome', 'Cargo', 'Reporta a', 'Área / Turno']);
+
+  rows.push(['Diretoria', ESTRUTURA.diretor.nome, ESTRUTURA.diretor.cargo, '—', 'Direção']);
+
+  // Áreas que reportam direto à diretoria (E-commerce via Baby)
+  ESTRUTURA.areasDir.forEach(area => {
+    const areaName = area.cargo.split('—')[1]?.trim() || area.cargo;
+    rows.push(['Liderança de Área', area.nome, area.cargo, ESTRUTURA.diretor.nome, areaName]);
+    for (const grupo in area.equipe) {
+      area.equipe[grupo].forEach(p => {
+        rows.push([grupo, p.nome, p.cargo, area.nome, areaName]);
+      });
+    }
+  });
+
+  // Gerência Logística
+  rows.push(['Gerência', ESTRUTURA.gerente.nome, ESTRUTURA.gerente.cargo, ESTRUTURA.diretor.nome, 'Logística']);
+
+  // Áreas no nível de gerência (Facilities)
+  ESTRUTURA.areasGerencia.forEach(area => {
+    rows.push(['Gerência', area.nome, area.cargo, ESTRUTURA.diretor.nome, area.cargo]);
+    for (const grupo in area.equipe) {
+      area.equipe[grupo].forEach(p => {
+        rows.push([grupo, p.nome, p.cargo, area.nome, area.cargo]);
+      });
+    }
+  });
+
+  // Áreas independentes vinculadas à gerência (Retira, Analista Faturamento)
+  if (ESTRUTURA.areasIndep) {
+    ESTRUTURA.areasIndep.forEach(area => {
+      rows.push(['Área vinculada', area.nome, area.cargo, ESTRUTURA.gerente.nome, area.cargo]);
+    });
+  }
+
+  ESTRUTURA.supervisores.forEach(sup => {
+    const area = sup.turno === 'M' ? 'Motoristas' : `Turno ${sup.turno}`;
+    rows.push(['Supervisão', sup.nome, sup.cargo, ESTRUTURA.gerente.nome, area]);
+    for (const grupo in sup.equipe) {
+      sup.equipe[grupo].forEach(p => {
+        rows.push([grupo, p.nome, p.cargo, sup.nome, area]);
+      });
+    }
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  // larguras
+  ws['!cols'] = [{ wch: 18 }, { wch: 32 }, { wch: 32 }, { wch: 28 }, { wch: 16 }];
+  // estilo do cabeçalho (negrito) — SheetJS Community não estiliza, mas a coluna fica legível
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Organograma');
+
+  // Aba 2: KPIs
+  const kpis = [
+    ['Indicador', 'Valor'],
+    ['Total de colaboradores', totalGeral()],
+    ['Lideranças', totalLiderancas()],
+    ['Motoristas', totalMotoristas()],
+    ['Turnos operacionais', 3],
+    ['Span of control médio', ((totalGeral() - totalLiderancas()) / totalLiderancas()).toFixed(1)],
+    ['Data do documento', new Date().toLocaleDateString('pt-BR')]
+  ];
+  const wsKpi = XLSX.utils.aoa_to_sheet(kpis);
+  wsKpi['!cols'] = [{ wch: 30 }, { wch: 20 }];
+  XLSX.utils.book_append_sheet(wb, wsKpi, 'KPIs');
+
+  XLSX.writeFile(wb, 'organograma_logistica.xlsx');
+}
+
+// ============================================================
+// MODAL DE INFO DOS KPIs
+// ============================================================
+const INFO_KPI = {
+  total: {
+    titulo: "Total de colaboradores",
+    sub: "Quadro ativo da operação",
+    secoes: [
+      {
+        nome: "O que é",
+        texto: "Soma de todas as pessoas que fazem parte do quadro de logística — incluindo diretoria, gerências, supervisores, líderes, analistas, conferentes, auxiliares, motoristas, e-commerce e facilities."
+      },
+      {
+        nome: "Como interpretar",
+        texto: "Indicador básico de dimensionamento da operação. Permite comparar com volume de pedidos, faturamento e produtividade por pessoa."
+      }
+    ]
+  },
+  lider: {
+    titulo: "Lideranças",
+    sub: "Pessoas com responsabilidade de gestão",
+    secoes: [
+      {
+        nome: "O que é",
+        texto: "Contagem dos cargos com responsabilidade direta de gestão de pessoas: Diretor, Gerentes, Supervisores e Líderes."
+      },
+      {
+        nome: "Como interpretar",
+        texto: "Mostra quantas posições de comando existem na estrutura. Comparado com o total de colaboradores, ajuda a entender se a estrutura está enxuta ou com excesso de gestão."
+      }
+    ]
+  },
+  turnos: {
+    titulo: "Turnos operacionais",
+    sub: "Janelas de operação ao longo do dia",
+    secoes: [
+      {
+        nome: "O que é",
+        texto: "Quantidade de turnos que mantêm a operação funcionando: Manhã (A), Tarde (B) e Noite (C)."
+      },
+      {
+        nome: "Como interpretar",
+        texto: "Operação 24h em 3 turnos é típica de centros de distribuição com alto volume. Permite atender pedidos em janelas amplas e garantir saída de cargas no início do dia seguinte."
+      }
+    ]
+  },
+  motoristas: {
+    titulo: "Frota de motoristas",
+    sub: "Capacidade de entrega",
+    secoes: [
+      {
+        nome: "O que é",
+        texto: "Total de motoristas entregadores ativos (Pleno e Master), incluindo os que estão temporariamente afastados."
+      },
+      {
+        nome: "Como interpretar",
+        texto: "Define a capacidade máxima de rotas simultâneas por dia. Comparado com o volume de pedidos para entrega, mostra se a frota está dimensionada corretamente ou se há gargalo."
+      }
+    ]
+  },
+  span: {
+    titulo: "Span médio",
+    sub: "Média de subordinados por liderança",
+    secoes: [
+      {
+        nome: "O que é",
+        texto: "Conceito clássico de gestão que mede quantos subordinados diretos cada líder gerencia, em média. Fórmula: (Total de colaboradores − Lideranças) ÷ Lideranças."
+      },
+      {
+        nome: "Faixas de referência",
+        texto: "1 a 4 → estrutura inchada, muitos chefes para pouca gente · 5 a 8 → faixa saudável (ideal) · 9 a 12 → operação enxuta, mas com risco de sobrecarga · 13 ou mais → estrutura achatada demais, risco de perda de direção."
+      },
+      {
+        nome: "Como interpretar",
+        texto: "É um dos indicadores que diretores e RH usam para avaliar se a estrutura precisa contratar mais supervisão, reduzir camadas de gestão ou está bem dimensionada. Logística geralmente opera entre 6 e 10."
+      },
+      {
+        nome: "__regua_span__",
+        texto: ""
+      }
+    ]
+  },
+  spanMax: {
+    titulo: "Maior equipe",
+    sub: "Líder com mais subordinados diretos",
+    secoes: [
+      {
+        nome: "O que é",
+        texto: "Identifica quem comanda a maior quantidade de pessoas na operação. É o oposto do conceito de média: aqui mostramos o caso individual de maior carga de comando."
+      },
+      {
+        nome: "Por que isso importa",
+        texto: "Se este número estiver muito alto (acima de 15), pode indicar sobrecarga dessa liderança. A média geral pode parecer saudável mas esconder casos extremos. Vale avaliar se essa pessoa precisa de um líder intermediário ou de mais apoio."
+      }
+    ]
+  },
+  spanMin: {
+    titulo: "Menor equipe",
+    sub: "Líder com menos subordinados diretos",
+    secoes: [
+      {
+        nome: "O que é",
+        texto: "Identifica quem comanda a menor quantidade de pessoas. O oposto da maior equipe."
+      },
+      {
+        nome: "Por que isso importa",
+        texto: "Se for muito baixo (1 a 3), pode indicar subutilização ou que essa posição poderia absorver mais responsabilidades. Em alguns casos é justificado (área especializada que demanda menos gente), em outros é sinal de estrutura inchada."
+      }
+    ]
+  }
+};
+
+function abrirInfoKpi(chave) {
+  const dados = INFO_KPI[chave];
+  if (!dados) return;
+
+  document.getElementById('infoKpiTitulo').textContent = dados.titulo;
+  document.getElementById('infoKpiSub').textContent = dados.sub;
+
+  const body = document.getElementById('infoKpiBody');
+  body.innerHTML = '';
+  dados.secoes.forEach(s => {
+    if (s.nome === '__regua_span__') {
+      body.appendChild(renderReguaSpan());
+      return;
+    }
+    const div = document.createElement('div');
+    div.className = 'info-kpi-secao';
+    div.innerHTML = `
+      <div class="info-kpi-titulo">${s.nome}</div>
+      <div class="info-kpi-texto">${s.texto}</div>
+    `;
+    body.appendChild(div);
+  });
+
+  document.getElementById('modalInfoKpi').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderReguaSpan() {
+  const total = totalGeral();
+  const lider = totalLiderancas();
+  const subs = total - lider;
+  const span = subs / lider;
+  // posição na régua (0 a 100%) — clamp pra 0..16 -> 0..100
+  const pct = Math.max(0, Math.min(100, (span / 16) * 100));
+
+  let status, statusColor, statusDesc;
+  if (span <= 4) {
+    status = "Estrutura inchada";
+    statusColor = "#f87171";
+    statusDesc = "Muitos chefes para pouca gente. Custo de gestão alto, risco de microgerenciamento.";
+  } else if (span <= 8) {
+    status = "Saudável (faixa ideal)";
+    statusColor = "#4ade80";
+    statusDesc = "Equilíbrio entre controle e autonomia. Lideranças conseguem acompanhar a equipe sem sobrecarga.";
+  } else if (span <= 12) {
+    status = "Operação enxuta";
+    statusColor = "#fbbf24";
+    statusDesc = "Lideranças com muita responsabilidade. Funciona bem em operações maduras, mas exige atenção a sobrecarga.";
+  } else {
+    status = "Estrutura achatada demais";
+    statusColor = "#f87171";
+    statusDesc = "Risco de perda de direção e qualidade. Vale considerar abrir nova camada de supervisão.";
+  }
+
+  const div = document.createElement('div');
+  div.className = 'info-kpi-secao';
+  div.innerHTML = `
+    <div class="info-kpi-titulo">Como está sua equipe</div>
+    <div class="regua-span">
+      <div class="regua-numeros">
+        <div class="regua-resumo">
+          <span class="regua-num">${subs}</span>
+          <span class="regua-divider">÷</span>
+          <span class="regua-num">${lider}</span>
+          <span class="regua-divider">=</span>
+          <span class="regua-num regua-num-destaque">${span.toFixed(1)}</span>
+        </div>
+        <div class="regua-resumo-label">colaboradores ÷ lideranças = span atual</div>
+      </div>
+      <div class="regua-barra">
+        <div class="regua-faixa regua-faixa-1"></div>
+        <div class="regua-faixa regua-faixa-2"></div>
+        <div class="regua-faixa regua-faixa-3"></div>
+        <div class="regua-faixa regua-faixa-4"></div>
+        <div class="regua-marcador" style="left:${pct}%">
+          <div class="regua-marcador-pin"></div>
+          <div class="regua-marcador-valor">${span.toFixed(1)}</div>
+        </div>
+      </div>
+      <div class="regua-legenda">
+        <div class="regua-legenda-item"><span class="regua-dot" style="background:#f87171"></span>1-4 Inchada</div>
+        <div class="regua-legenda-item"><span class="regua-dot" style="background:#4ade80"></span>5-8 Ideal</div>
+        <div class="regua-legenda-item"><span class="regua-dot" style="background:#fbbf24"></span>9-12 Enxuta</div>
+        <div class="regua-legenda-item"><span class="regua-dot" style="background:#f87171"></span>13+ Achatada</div>
+      </div>
+      <div class="regua-status" style="border-color:${statusColor};color:${statusColor}">
+        <div class="regua-status-label">Diagnóstico</div>
+        <div class="regua-status-titulo">${status}</div>
+        <div class="regua-status-desc">${statusDesc}</div>
+      </div>
+    </div>
+  `;
+  return div;
+}
+
+function fecharInfoKpi() {
+  document.getElementById('modalInfoKpi').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ============================================================
+// MODAL DE ATRIBUIÇÕES
+// ============================================================
+let atribAtual = null;
+
+function abrirAtribuicoes(chave) {
+  const dados = ATRIBUICOES[chave];
+  if (!dados) return;
+  atribAtual = chave;
+
+  document.getElementById('modalTitulo').textContent = dados.titulo;
+  document.getElementById('modalSubtitulo').textContent = dados.subtitulo;
+
+  const content = document.getElementById('atribContent');
+  content.innerHTML = '';
+
+  dados.categorias.forEach(cat => {
+    const cat_el = document.createElement('div');
+    cat_el.className = 'atrib-categoria';
+
+    cat_el.innerHTML = `
+      <div class="atrib-cat-header">
+        <div class="atrib-cat-icon">${cat.icone}</div>
+        <div class="atrib-cat-title">${cat.nome}</div>
+        <div class="atrib-cat-count"><strong>${cat.itens.length}</strong> atividades</div>
+      </div>
+      <div class="atrib-list">
+        ${cat.itens.map(item => `
+          <div class="atrib-item">
+            <div class="atrib-bullet"></div>
+            <div class="atrib-text">${item}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    content.appendChild(cat_el);
+  });
+
+  document.getElementById('modalAtribuicoes').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModal() {
+  document.getElementById('modalAtribuicoes').classList.remove('show');
+  document.body.style.overflow = '';
+  atribAtual = null;
+}
+
+// Fechar com ESC
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    fecharModal();
+    fecharInfoKpi();
+    fecharHistorico();
+  }
+});
+
+// ============================================================
+// MONTAR SEÇÃO DE ATRIBUIÇÕES PARA O PDF
+// ============================================================
+function iniciaisPrint(nome) {
+  return nome.trim().split(/\s+/).slice(0, 2).map(p => p[0]).join('').toUpperCase();
+}
+
+function renderBlocoAtribuicaoPrint(nome, cargo, chaveAtrib, nivel = 'supervisor') {
+  const dados = ATRIBUICOES[chaveAtrib];
+  if (!dados) return '';
+
+  let html = `
+    <div class="print-atrib-bloco">
+      <div class="print-atrib-bloco-header">
+        <div class="print-atrib-avatar">${iconePorNivel(nivel)}</div>
+        <div class="print-atrib-bloco-info">
+          <div class="print-atrib-nome">${nome}</div>
+          <div class="print-atrib-cargo">${cargo}</div>
+        </div>
+      </div>
+  `;
+  dados.categorias.forEach(cat => {
+    html += `<div class="print-atrib-categoria">`;
+    html += `<div class="print-atrib-cat-titulo">${cat.nome}</div>`;
+    html += `<div class="print-atrib-itens">`;
+    cat.itens.forEach(item => {
+      html += `<div class="print-atrib-item">${item}</div>`;
+    });
+    html += `</div></div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function montarSecaoAtribuicoesPdf() {
+  const root = document.getElementById('printAtribuicoes');
+  if (!root) return;
+
+  let html = `
+    <h2>Atribuições e Responsabilidades</h2>
+    <div class="print-atribuicoes-sub">Lideranças e Equipes da Logística</div>
+  `;
+
+  // Diretor (sem atribuições por enquanto, pula)
+
+  // Gerente
+  if (ESTRUTURA.gerente.atribuicoesKey) {
+    html += renderBlocoAtribuicaoPrint(
+      ESTRUTURA.gerente.nome,
+      ESTRUTURA.gerente.cargo,
+      ESTRUTURA.gerente.atribuicoesKey,
+      ESTRUTURA.gerente.nivel
+    );
+  }
+
+  // Áreas independentes (Erivancleide, Lucas Souza)
+  (ESTRUTURA.areasIndep || []).forEach(area => {
+    if (area.atribuicoesKey) {
+      html += renderBlocoAtribuicaoPrint(area.nome, area.cargo, area.atribuicoesKey, area.nivel);
+    }
+  });
+
+  // Supervisores: 1 bloco por chave única (evita duplicar atribuições padrão)
+  const chavesUsadas = new Set();
+  ESTRUTURA.supervisores.forEach(sup => {
+    if (!sup.atribuicoes) return;
+    sup.atribuicoes.forEach(a => {
+      if (chavesUsadas.has(a.key)) return;
+      chavesUsadas.add(a.key);
+      const dados = ATRIBUICOES[a.key];
+      if (!dados) return;
+      const titulo = dados.titulo.replace(/^Atribuições — /, '');
+      const sub = dados.subtitulo || '';
+      // Define nível visual baseado na chave
+      let nivelBloco = 'supervisor';
+      if (a.key.includes('conferentes') || a.key === 'empilhadeira') nivelBloco = 'conferente';
+      else if (a.key.includes('auxiliares') || a.key.includes('equipeCleiton')) nivelBloco = 'aux';
+      else if (a.key === 'motoristas') nivelBloco = 'motorista';
+      else if (a.key === 'lideresPadrao') nivelBloco = 'lider';
+      html += renderBlocoAtribuicaoPrint(titulo, sub, a.key, nivelBloco);
+    });
+  });
+
+  // Líderes (dentro da equipe dos supervisores)
+  const lideresVistos = new Set();
+  ESTRUTURA.supervisores.forEach(sup => {
+    for (const grupo in sup.equipe) {
+      sup.equipe[grupo].forEach(m => {
+        if (m.atribuicoesKey && !lideresVistos.has(m.nome)) {
+          lideresVistos.add(m.nome);
+          html += renderBlocoAtribuicaoPrint(m.nome, m.cargo, m.atribuicoesKey, m.nivel);
+        }
+      });
+    }
+  });
+
+  root.innerHTML = html;
+}
+
+// ============================================================
+// MODO APRESENTAÇÃO (FULLSCREEN)
+// ============================================================
+function toggleFullscreen() {
+  const ativo = document.body.classList.toggle('modo-apresentacao');
+  const btn = document.getElementById('btnFullscreen');
+
+  if (ativo) {
+    btn.textContent = '⛶ Sair da apresentação';
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+  } else {
+    btn.textContent = '⛶ Modo apresentação';
+    if (document.fullscreenElement && document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+}
+
+// Detecta saída do fullscreen pelo navegador (Esc no fullscreen nativo)
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement && document.body.classList.contains('modo-apresentacao')) {
+    document.body.classList.remove('modo-apresentacao');
+    document.getElementById('btnFullscreen').textContent = '⛶ Modo apresentação';
+  }
+});
+
+// Atalhos de teclado
+document.addEventListener('keydown', e => {
+  // Esc OU F sai do modo apresentação
+  if ((e.key === 'Escape' || e.key === 'f' || e.key === 'F') && document.body.classList.contains('modo-apresentacao')) {
+    // Esc fecha modais primeiro; só sai do modo apresentação se nenhum modal estiver aberto
+    const modalAberto = document.querySelector('.modal-overlay.show');
+    if (e.key === 'Escape' && modalAberto) return; // deixa o handler do modal lidar
+    toggleFullscreen();
+  }
+});
+
+// ============================================================
+// MODAL DE HISTÓRICO
+// ============================================================
+function abrirHistorico() {
+  const body = document.getElementById('historicoBody');
+  body.innerHTML = HISTORICO.map(item => `
+    <div class="historico-item">
+      <div class="historico-data">
+        <div class="historico-data-valor">${item.data}</div>
+      </div>
+      <div class="historico-info">
+        <span class="historico-tipo historico-tipo-${item.tipo}">${item.tipo}</span>
+        <div class="historico-desc">${item.descricao}</div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('modalHistorico').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharHistorico() {
+  document.getElementById('modalHistorico').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+montarArvore();
+atualizarKPIs();
+setarData();
+montarSecaoAtribuicoesPdf();
 </script>
+
 </body>
 </html>
